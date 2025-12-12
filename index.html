@@ -25,7 +25,7 @@
 <body>
   <h1>Zoho Prefill URL Builder</h1>
   <div class="hint">
-    Fills query params like <code>pfn</code>, <code>pln</code>, etc., and generates a copyable URL.
+    Generates a Zoho prefill URL and always appends <code>auto=Stu</code>.
   </div>
 
   <div class="row">
@@ -89,22 +89,21 @@
 
       <div>
         <label>“+2 selective” (p2)</label>
-        <input name="p2" placeholder="Internal Medicine" />
+        <select name="p2">
+          <option value="">(blank)</option>
+          <option value="Internal Medicine">Internal Medicine</option>
+          <option value="Surgery">Surgery</option>
+        </select>
       </div>
 
       <div>
         <label>Rotation Type (ro)</label>
         <select name="ro">
           <option value="">(blank)</option>
-          <option>Elective</option>
-          <option>Sub-internship</option>
-          <option>Core</option>
+          <option value="Elective">Elective</option>
+          <option value="Sub-internship">Sub-internship</option>
+          <option value="Core">Core</option>
         </select>
-      </div>
-
-      <div class="full">
-        <label>Auto-email (auto)</label>
-        <input name="auto" placeholder="Stu" />
       </div>
     </div>
 
@@ -119,7 +118,7 @@
       <label>Result</label>
       <textarea id="result" readonly placeholder="Your generated URL will appear here..."></textarea>
       <div class="hint">
-        Note: values are URL-encoded (e.g. <code>@</code> becomes <code>%40</code>, spaces become <code>%20</code>, <code>/</code> becomes <code>%2F</code>).
+        Values are URL-encoded automatically (e.g. <code>@</code> → <code>%40</code>, spaces → <code>%20</code>).
       </div>
     </div>
   </form>
@@ -129,6 +128,9 @@
     const baseUrlInput = document.getElementById("baseUrl");
     const result = document.getElementById("result");
     const toast = document.getElementById("toast");
+
+    const AUTO_KEY = "auto";
+    const AUTO_VALUE = "Stu";
 
     function showToast(msg) {
       toast.textContent = msg;
@@ -142,14 +144,16 @@
       const fd = new FormData(form);
       const params = new URLSearchParams();
 
-      // Only include non-empty fields
+      // Only include non-empty fields from the form
       for (const [key, valueRaw] of fd.entries()) {
         const value = String(valueRaw).trim();
         if (value !== "") params.set(key, value);
       }
 
-      // If there are no params, return base
-      const qs = params.toString(); // URL-encodes automatically
+      // Always add auto=Stu (and force it even if someone later adds an auto field)
+      params.set(AUTO_KEY, AUTO_VALUE);
+
+      const qs = params.toString();
       return qs ? `${base}?${qs}` : base;
     }
 
@@ -168,7 +172,6 @@
         await navigator.clipboard.writeText(url);
         showToast("Copied!");
       } catch (e) {
-        // Fallback for older browsers
         result.focus();
         result.select();
         document.execCommand("copy");
@@ -176,12 +179,13 @@
       }
     });
 
-    // Optional: live update as user types
-    form.addEventListener("input", () => {
-      result.value = buildUrl();
-    });
-    baseUrlInput.addEventListener("input", () => {
-      result.value = buildUrl();
+    // Live update as user types
+    form.addEventListener("input", () => { result.value = buildUrl(); });
+    baseUrlInput.addEventListener("input", () => { result.value = buildUrl(); });
+
+    // Reset should also refresh result (and keep auto=Stu)
+    form.addEventListener("reset", () => {
+      setTimeout(() => { result.value = buildUrl(); }, 0);
     });
 
     // Initialize preview
