@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zoho Prefill URL Builder</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 24px; max-width: 980px; }
+    h1 { margin: 0 0 12px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(280px, 1fr)); gap: 12px 16px; }
+    label { display:block; font-size: 13px; margin-bottom: 6px; color: #333; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; }
+    .full { grid-column: 1 / -1; }
+    .row { display:flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+    button { padding: 10px 14px; border: 0; border-radius: 12px; cursor: pointer; font-size: 14px; }
+    button.primary { background: #111; color: #fff; }
+    button.secondary { background: #eee; }
+    textarea { width:100%; min-height: 120px; padding: 12px; border: 1px solid #ccc; border-radius: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 13px; }
+    .hint { color:#555; font-size: 13px; margin-top: 6px; }
+    .toast { margin-left: 8px; color: #0a7; font-size: 13px; }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>Zoho Prefill URL Builder</h1>
+  <div class="hint">
+    Fills query params like <code>pfn</code>, <code>pln</code>, etc., and generates a copyable URL.
+  </div>
+
+  <div class="row">
+    <label style="min-width: 220px;">
+      Base Zoho Form URL (everything before the <code>?</code>)
+      <input id="baseUrl" value="https://forms.zohopublic.com/CNUCOM/form/CNUCollegeofMedicine1/formperma/3rDhVti_lRn30ObkXtgR3vkZoqfJ_CoOKONdJXPYDsA" />
+    </label>
+  </div>
+
+  <hr style="margin: 18px 0; border:0; border-top:1px solid #eee;" />
+
+  <form id="builder">
+    <div class="grid">
+      <div>
+        <label>Preceptor First Name (pfn)</label>
+        <input name="pfn" placeholder="PreceptorFirst" />
+      </div>
+      <div>
+        <label>Preceptor Last Name (pln)</label>
+        <input name="pln" placeholder="PreceptorLast" />
+      </div>
+      <div>
+        <label>Preceptor Email (pe)</label>
+        <input name="pe" placeholder="Preceptor@email.com" />
+      </div>
+      <div>
+        <label>Preceptor Cell (cell)</label>
+        <input name="cell" placeholder="555-555-5555" />
+      </div>
+
+      <div>
+        <label>Student First Name (sfn)</label>
+        <input name="sfn" placeholder="StudentFirst" />
+      </div>
+      <div>
+        <label>Student Last Name (sln)</label>
+        <input name="sln" placeholder="StudentLast" />
+      </div>
+      <div>
+        <label>Student Email (se)</label>
+        <input name="se" placeholder="student@cnsu.edu" />
+      </div>
+      <div>
+        <label>Course Name/Number (cn)</label>
+        <input name="cn" placeholder="CourseNameNumber" />
+      </div>
+
+      <div class="full">
+        <label>Rotation Site (site)</label>
+        <input name="site" placeholder="RotationSite" />
+      </div>
+
+      <div>
+        <label>Rotation Start (start)</label>
+        <input name="start" placeholder="01/01/2025" />
+      </div>
+      <div>
+        <label>Rotation End (end)</label>
+        <input name="end" placeholder="12/31/2025" />
+      </div>
+
+      <div>
+        <label>“+2 selective” (p2)</label>
+        <input name="p2" placeholder="Internal Medicine" />
+      </div>
+
+      <div>
+        <label>Rotation Type (ro)</label>
+        <select name="ro">
+          <option value="">(blank)</option>
+          <option>Elective</option>
+          <option>Sub-internship</option>
+          <option>Core</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label>Auto-email (auto)</label>
+        <input name="auto" placeholder="Stu" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="primary" type="button" id="generateBtn">Generate URL</button>
+      <button class="secondary" type="button" id="copyBtn">Copy to Clipboard</button>
+      <button class="secondary" type="reset">Clear</button>
+      <span class="toast" id="toast" aria-live="polite"></span>
+    </div>
+
+    <div style="margin-top: 12px;">
+      <label>Result</label>
+      <textarea id="result" readonly placeholder="Your generated URL will appear here..."></textarea>
+      <div class="hint">
+        Note: values are URL-encoded (e.g. <code>@</code> becomes <code>%40</code>, spaces become <code>%20</code>, <code>/</code> becomes <code>%2F</code>).
+      </div>
+    </div>
+  </form>
+
+  <script>
+    const form = document.getElementById("builder");
+    const baseUrlInput = document.getElementById("baseUrl");
+    const result = document.getElementById("result");
+    const toast = document.getElementById("toast");
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      setTimeout(() => (toast.textContent = ""), 2200);
+    }
+
+    function buildUrl() {
+      const base = (baseUrlInput.value || "").trim();
+      if (!base) return "";
+
+      const fd = new FormData(form);
+      const params = new URLSearchParams();
+
+      // Only include non-empty fields
+      for (const [key, valueRaw] of fd.entries()) {
+        const value = String(valueRaw).trim();
+        if (value !== "") params.set(key, value);
+      }
+
+      // If there are no params, return base
+      const qs = params.toString(); // URL-encodes automatically
+      return qs ? `${base}?${qs}` : base;
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      const url = buildUrl();
+      result.value = url;
+      if (url) showToast("URL generated.");
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      const url = result.value || buildUrl();
+      if (!url) return showToast("Nothing to copy yet.");
+      result.value = url;
+
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast("Copied!");
+      } catch (e) {
+        // Fallback for older browsers
+        result.focus();
+        result.select();
+        document.execCommand("copy");
+        showToast("Copied (fallback)!");
+      }
+    });
+
+    // Optional: live update as user types
+    form.addEventListener("input", () => {
+      result.value = buildUrl();
+    });
+    baseUrlInput.addEventListener("input", () => {
+      result.value = buildUrl();
+    });
+
+    // Initialize preview
+    result.value = buildUrl();
+  </script>
+</body>
+</html>
