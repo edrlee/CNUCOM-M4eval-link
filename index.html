@@ -3,92 +3,63 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Zoho Prefill URL Builder</title>
+  <title>M4 Preceptor Evaluation URL Builder</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    body { margin: 24px; max-width: 980px; }
-    h1 { margin: 0 0 12px; }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(280px, 1fr)); gap: 12px 16px; }
-    label { display:block; font-size: 13px; margin-bottom: 6px; color: #333; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; }
+    body { margin: 18px; max-width: 620px; }
+    h1 { margin: 6px 0 8px; font-size: 20px; }
+    .header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .logo { height: 36px; width: auto; }
+    .card { border:1px solid #eee; border-radius: 14px; padding: 10px; box-shadow: 0 1px 5px rgba(0,0,0,.04); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 6px 8px; }
+    label { display:block; font-size: 12px; margin-bottom: 4px; color: #222; }
+    input, select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 10px; font-size: 13px; box-sizing: border-box; }
     .full { grid-column: 1 / -1; }
-    .row { display:flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
-    button { padding: 10px 14px; border: 0; border-radius: 12px; cursor: pointer; font-size: 14px; }
+    .row { display:flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+    button { padding: 7px 10px; border: 0; border-radius: 10px; cursor: pointer; font-size: 13px; }
     button.primary { background: #111; color: #fff; }
     button.secondary { background: #eee; }
-    textarea { width:100%; min-height: 120px; padding: 12px; border: 1px solid #ccc; border-radius: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 13px; }
-    .hint { color:#555; font-size: 13px; margin-top: 6px; }
-    .toast { margin-left: 8px; color: #0a7; font-size: 13px; }
-    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+    .toast { margin-left: 6px; color: #0a7; font-size: 12px; }
+    .warning { display:none; margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: #fff3cd; border: 1px solid #ffe69c; color: #664d03; font-size: 12px; }
+    .note { margin-top: 8px; font-size: 12px; color: #555; line-height: 1.25; }
+    hr { margin: 10px 0; border:0; border-top:1px solid #eee; }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  
+    
+    
+
+  
+    .warn-emoji { font-size: 14px; vertical-align: middle; }
+  
+    #rotTypeBanner { font-size: 13px; }
   </style>
 </head>
 <body>
-  <h1>Zoho Prefill URL Builder</h1>
-  <div class="hint">
-    Generates a Zoho prefill URL and always appends <code>auto=Stu</code>.
+
+  <div class="header">
+    <img class="logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCABJAJQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKK83/bC17xf4W/ZV+Ieo+AIJLnxrY+Hr2fRY44xLI10sLFNiHhnB5Ve5AGDnFNK7sKTsrnpFFfL/waT4F+A/hT4e+Kfh260O71mDw/Nff2rFfL/auvEwBrhbklvMnlL4ysoJSQgYU8V5T4j/ae8c6T+yz4/wBE8S6/q+ieP/BPi/RJWvJNlldPpOqajbPFlckCMLLc2me4t88E1qqLbsjB4hJXZ97UV8e/tefGrXPDPxZ+LcGieLL6zs9E+DkuuWkVreKI7G/S8uE+0L12yAIqnPHHSrfwu1jVfFXx5XwD4v17xH4d0x/B0Wv6TCPEbzTa1PNK63Nwt2AjkW6rDiEcKZS5BBXB7F25h+3XNyn1vRX5tfD79pvxxceODNrvxA8QJp+iLogTXt8Saati2tX1r/aV7bcZivLaBIzIq7A7JJmMEtXpXxl/aS8c/DCL4t3OpazezeAdS1q50LStZsh/pfgbU0SBYYpmUE/ZJ3cbZSP3Uj7X+V1Ip4aV7XIWKi1ex9t0V8eXHxh8Wt8LPix4f0fxDrE3jXVvH154W8NSxlbu50lUsbaZmjjJGVhBlY56Fxk4IrX+KHxu/wCGmf8AgmpaeIY9XufCWseIJNM0y/urSVEuvD2qf2jBbXCrnKiWG4Dja3XbgjBqfYvQv2619Ln1ZRX57/Gr9obxr4R8bCLxXEfDfxN8B6E1hrWuWdkWsrnRrrU7GA69Z5ymFhMxdGBNvIX3Db16X9sf4h698ENc8TWHg3xzr0+gXvgmPXJydUFw+h3iapYwW8sNy+SgvIp7hSjNtPlF1xhqr6u20r7k/WVZu2x9x0V8NXfjXVr74ZxXkvj/AMZWms6b8UbPwrc6XNqn2e+0SwuNSiQWd3tyssjROWSfktFLHtdtu46/xG+InjT4c63+0nomh6nq+sWHgnwbY3Nld32v7LnQZG0+8la4QsjF3LRq5LEZ8sDoTS9g+/8AWn+Y/rC7f1r/AJH2dRXx/wDDPxR4g8Q/Gzw1onirXdf1PQvH2k20nh7V9D10xPYT2+mxTXmn38CYId/mnFwCSTIqHZ8oPE+FPiX45uP2OLS58L+L/F+t/E7xvqmsWOnSPcjUTbwabqFyTKkJwvCQw27Ec4nBOSKPYPuH1hdv6/pn3tRXyD8M/HcX7QX7QHw5v9L8X+MYPD3j/wAGXviq406HXHVLe9iu7NDCFwCqxF5oWQYH3sjIzXSf8E2PGut/EP4fXWs67rGoazdXl1fxx3Fxry3gmSHUrmJcWwUeRsVUTIJ3BRnmplSaVxxrqUrL+tv8z6aooorI3Ciivkz/AILCf8FMND/4JvfsxXt5HqaRfFDxjaXdh8PNLfS578axqyIgjjZYxtCB5YtxdlGG4JPFAHQftw/tN/s9f8E8vhrf/EX4n2nh3TLK61G3027ktNIiu764nnfeu6JFMj/d8xuCcJuwcCvzt/aP/wCDkM/EJvGK/DP9mYeLsahbWPhvxL4t8qz07XtNRkeSWaGcRTplvM8lBuHzK5wcpXxnpnwx1j42fG7Vfjr8Z7iz1fx14suF/tbW7K1j8u1lijSFLLS4DldyhEiEuGd2DeWVGWPuvgD9knxT8VvHenS+FfDg0bUYoZoVsxDJqWpXEcoxuuQrbInXOQzylgeuMYrPMcxwGWU41MzrqnzO0VvKT7Riryk+6inbqc1FYjFTcMFS57bvovNvRJebav0O60T/AIOLdd0DU/GBvv2N9Kl0NtLjtfDumaLrlhd3hfO64gvnQHdCzkuojhJG3BVixZfu39jH/gq/+zR/wU21qbwbosccfiPwbo9rq99ofiXRjZNoplxHJBGZ1Xc8LFY3KDb8y4JBr4E/aZ/YJ+LXw38MXGn+KItIhN3AYob6bSxFbuzbT81xCXjMgxwZMEFm5Oa+aP2jP2OvDPx+0GTSLvQb7Ttf0i0iU2c8vmapaNgAXVjdHiaJnGfLJMZOR+6bbWeX5vlmY1Z0MDXvVhq4STjNLu4zUZJefLbzHXp4rCxU8XStCW0lZr702vle/kf0nSfDvw/NNcyNomkM99aCwuGNpGTcWwGBA/HzRgE4Q/KMnivB/wBlH4g3vj/9oL46+A9R0vwpF4a8B6pZWVpDZaSIGvhcW4mL3OWZXZQFQYUZAGa+S/8Aghr/AMFitd+O/jXVPgb8efEukS/F6KfzvCH9naDPaQ+ItGjtQxuC6hohIGjl3K3lkEFcEg4+pPDvgrxf+yv+2H8VPFMHg/WPGfgz4rDT9QhuNFkhe80q+toGgkhmhkdCY3G1lkQkL0YDrXdFfFF7/wDBHN6xlHb/AIBy037aGifs9eIde1/x3oWjNplj8SLzwiNX0jRxDLo8As4p31C5wXZlO8JK67dqgMQQCK9p8Z+MtH0X4n+B/COmeFvDeq6H8Szf6t9uQx/ZxPbwpOJzGqFZTLuUiQHORnnivKPC37PXjLTvHvhLV9b8MpdQeJ/HWt+J/ElgksNxDo1peac1nDby5O2c4EQcIGGWfqoyZPhV+xb4n/Zq/an8Lx+G7n+1PghosGq32k6bPLvvfCF1cRKrWUDMcyWT/M0acmJgVztIrVqHR62MY+07aXX6f15fkk//AAUElvP2c/C/xU1T4e2K+Hdb8SN4T1ZpNQWaTQraS9NmbqQ+ViSAyoNyDB+dOvOPQvFOp6H4K+JU3w28N/D7wzd6Z/wj0viTWd0aQ2toscmy1ieIRkO0rrLs6bBA5x0FcX+yv+ypqHiT/gntrfwm+I2h3Giz642sWt1C0ySlI7u5mmimjeNiNyiRGGDlWX2ro/2R/g540+Hf7OOq3/xAhgv/AIneILHyNUFkwYSJawG1tIkJJHMaCRuceZPIeM1MuRXt3/4YcPaO3N1X/D/f/mcZ4W/aZm+Iv7LOqfHDUfhH4UGhf8ItL4mijfUo57+4+xFjHby5gAD7VkKOCwQjHGa6/wCCPx8tPiv8Y7jwn4n+HemaPq3i7wdbeLY723lS/t9X06RliMFwTGjiWNnVdrhkYE7T1FeG/BT9mPxP4K/YA1zwEvwi1LS/iVdfD/UtAutQa9tTa39zKXEMKuJmDhmkDF2VQoVsnoD6J8Efgz8Qf2YvGPhfX9J0PU/FOg+JPDFjoniTTtQ1FZ9W8LXlpFtiktpJH/eWbMXDwq2VYiRAQSouUYWaXy/q5EJVPdb+en/AL3wb/aLt/Fvwy8QfFzwl8O/CMPhy30vVZBNb3scOr276exX7LdxrHiJ5FiPyqzGPbGHHTGPq/wC1bqvwr/Z98OfFqw+DnhG28PavZ6bLYrb6xHBfQnVGhJQAW+1VEsqbyG+cqWx0rDvP2cvEet/EXx74z8HeAdd8BP468C6np3jHQpriBbTxDrksYS1lhjWRk8xCZd918odGGcktjX+LfwG8deIf+CXnw+8BWPha6ufGWjQ+Hra+037TCvkGylga4PmFtjKBC20g/NlcdadoXXqK9Sz7pduv3HXap8Y779nz4keDT41+FPhXwxoviXXG0CLxJpGoJcJplzdKXh8weTGyJczkxk5A8wgtncK739nrUNK17x743n8P+CND8PaBpWoNo9vrNpGkUuvTRf8AHyQiou2KKYyR7ix3ujkcDJP22/h7e/Gr9jnx/wCHdL0aTVtX17QpoNNsWZYn+1suYDvYgRskuxt+RtKZByBXR/s1+GJ/BX7PvgvR7rTn0m80rRrW0urRyC0UyRKsmSCQ2XDHdk7s571g2nC/U6IqSnbpudvRRRWJ0BX8/X/BU3463X7cv/BZLX/DOl+Or7WfAHwVtYdNtbC4sTZWvhrXLgGC/kRigeZkihkYStuAdgEyoBP9Atfzhx61dXX/AAV9/agGueMdK8deINO8VRGXWdOsxZQssdm0Udv5YJCPAsbW7HcwLxsckmt8Kk6quc2MbVF2PRP2afC8Wn3w1nUr678S6P4Yv5tJ8OrPGIDFZRSbZpFUcLI+CiseVUHBGa/Ujw78dbD4M+BJxoGjS6Ppln4Pg8ZfZrOG0QyQSyeWIS2zLTZ5LsSDX5nfsy6dPq/wK8P21pbTz3IE9o0UcZZzP9okBTA53FiOPev0B8YfDfxHd/D3UreLw7rzzv8AB+y0hY106bc14tzua3A2/wCsA521/MuL4kzTEcU5vXTfNRbpw0+GMOdJLspNczWzk2+p+jYHLcLSynCQtpNKT83Llbb9L2XZKx6v4u/aDvrK+1jSL5bu9Sx1jStBnR4bVorhtRjR0fBT7iBwGB5POK/Pz9ufwnpnir4o69b+EdMHhjXPCVzMumTwhFCahCW3lFX5VhlwFMeMdCRkV9qfEHwXreo+N/FFxBomsywXPjXwneROtjKRJDBBCJpB8vKxlWDHsRXyd+0f4a1LRf2kvFz3un31kt3rlxewm4gaLzYGlJWUbgMoQDg9OK87jfiXNMBOjmFKT56VZ8ravop1Uo37SjFKS+0nre52ZTluFxMJ4eaVpw1Xqou/qm212fofl3+17p+sfBXwV4I+JmjeK9X03VYHXUbrV7cbLhdPvLgQ30BRfmZQ/lvg87i2McV6f+wroXjX9sD9srwJ8PJPHfjO30jxLfefeS2+tXO9dPjja4k2EuCC0S7QTyN2cZFcD+3ZqtjB+xFqh3v++S5uIDJE4SJJL+IIyMRtZdwBwmcbTntWx+wd+0yv7IH7Zvw/+I+ou+qWWiXCjV57WLBvba4gMVxPEnOMrIZFUdcY4ziv9CuBJ15U8dQw6vPk5o36S95LrvtstbatWSf8u8VRoxlgq1d2jz8sv8Oj10233el9E9bfUH7U3/Bd/wCKeg/GK78OfBS80vwT8OfBty2kaLaHTUv59UjgYxiWd5tzHzCpIVcHBGWZiTXo3/BQj4w+Gf2mv2FrX4m2up6z8O/2ldBi0+bxZ4Xt7m+0q8uomxFM/wBhkYFrcKRMs6KQFXDP1A+ev2ov2JPFv7G/x/0L40fDuC28f/B688Q2/ibw14m0+IajYwRtcrMsF6i5MZQnbuYBWx1DZUdx/wAHG3xXv/FH7f8Ap2lqYre38NeFbWK1ltwUmdbovLIHcHLA5AA6Yzxya+mw2X5dUxmChlkFFWlJzT958vLzQqK13dtXu7p+ln42Ix2Pp4TFzzKTeqiotaLmvaUHfS1tLaNep8m/DfxL8Vvivf6hFo3i7xS8Oj2T6lqV5ceIJre0021QhWmmleQKi7mVR3ZmAUEnFaN8Pi4t9ZQ6X4013xMt/aPfJPoniWW9hhiSTynMzBx5JD4GJAudy4zkUv7MPxt8OeBfAHxP8B+Lv7Ss/DvxR0qzs31fTrYXNzot3Z3QuraUwll82AvlZEUhsEFckYrS8OeMPh54a/Z88e/DKXxVc3T+Mp9M1uPxHb6JMlpb3VjJOF0+4ib99JbyRzb/ADFXCSonysBuH2VZzhVklSVk4pe7e8Xa8rrrF393dpeaPk8LTpVKUHKq7tO75rWavaNn3018/I5rWtf+MvhtNebUdT+JNgPC0kMOsm4vruP+y3m/1Imy3yeZ/Bn7/bNTWV98bNS8U2mh29/8Sp9Zv7Eapa2KX90Z7i0KeYLhF35MXlgvuHG0E9K9Q8YftTeBvil8FPEXgq/17V9NZPDHhTw1pmsXWmyXT6v/AGTNeSzTTKjboxi5WKFWLEJEoYjtc8J/tLfDfQ/j94F8aS69eS2+jfDlfBd9YS+H5ZPLuF0SXT/NYbtssJldSQvJQtxxzzfWK/JJvDrmSdvdevuprp1d15Ws9ToeCoc8VHEPldr+8tPeaf3K357HlXh9Pjl4q1K6s9OvfiTeXNldjT5kj1G5+W5KhhADvw0u0g7FJbBHHNUtR174yaR4LXxHd6r8RbXQZHaNNQl1C6SB2WQxMAxfkrICh9GGDzXfaZ8V/hL438M/Cjw94rvruy0n4W+IbubUINO0qdLDxLpl3cx3Er2yI4ltbxdrxDeQGRYiHXbtrI+N3xm8F+Pv2YPB3h3R5hb614Wm1nbBe6TI9ykd3qjXNukV5uICiEjzQ2SXHGetawq1HUjF0NHKz9x6L3tb+dl093ms9SKmEoqnKarvSN172793S3ld+tjzb/hfnjrdj/hN/F2eOP7ZuM89ON9e4/sH/Fn4meFP+Cg3wf0vVvE3jexnuPGGj291Z3uo3KmW3nuYQyOjNykkT9CMFWrp/wBn74p/Czw/df8ACY2Hh22tbT4cabp+qaf9rghD22qWljO0gldyWu7i/wBQePYFUpHFCCdpUCvJP+Cf+rXuu/8ABQn4M3uo3Ml5qF34+0aa5mkbJkka/hZj+ZNZ4mcK+HxEXRUVGD3Svdp6fJb+ummrmnReHrUJqs5OU1s3aya/Nn9QdFFFfySf02FfhB/wXf8AhnqH7En/AAVm8FfGu41Lwbp3g74z28Xh+K0tYWtruHULHy5ftl4MbJgzzCMy7shJAGHygn9368g/bs/Y48O/t4/st+Mvhn4hSxgTxRpVxp9rqc+nR30ujTSJtW5hR8YkQ4YEMpyo5FVCTjJSRM4KcXF9T+bv9v8A+BXjfVPDkOteBNc8SaJLJfXF9pkdlqc9tHdl3zNZyMrKouQwDoT1O5c5xXy3cftG+KIXs4bzxz4r0e+zIt1aXHjPWRLbs2NqzKWyjR8/MpIPIIyK+4/2lv2ffiF/wS1+I2oeFPjRo/i7xf8AB3wlqEOm+HfiXJpbrpOp/aLdHjW7g3SDzUAePzVLHdHhg3BHbfDr4naB4m8LRXvw8+I9q9o20jTNQs7fV7SMkDf5UvzOoHzHa5B6Lgmpx+E9rB1sDThKq91N8qfrJQm//JX6o5MLiJ4d+yxLlyLZrX8G4r8fvPzii/aQ8RWtiPN+I/iRxOkkRYeONWae1bA2SAK+1gfmIBHPfHSvXf2KPhV8V/jr8av+Eiv/ABF45bQbSNjp9rNrd9dJcRxrskvSJH3G3GHdQw/eMyqBtDY+2PFvj6+0Jblta8faHFp0UQcT6HoltYvcZPK+bMCY9q4YklfvYByDXg138W9R+O/ifW/DP7M/grxR8VPF9vpQOsQaI819YNH5yhLu9fPz7XYBYo2KtjlsZU4ZfgKvLz5pRpwa1ShJ1PvcqdP8E/VGmJxvtP3eCcnfdtcv5Sl+fyOY/b48eWXjv4jeDvhVoGq2c1tovlavdG5h3RtY2h3xRmFfl3TPliuQGVFYnDCuOvLj7VeSyfPh3LDectjPGT9K+vPBv/Bu1+1J4U07UDNomma5qmu3h1HUtTutZs4Z7qRkUBMBiRGuDhc4HQAAVo/8Q/X7UH/QoaD/AOFDbf8AxVf0XwLiMryzCSqYrE01VqO7XPHRLZaNq+7bXe3Q/FOMsNmWYYiNLDYebp01o+V6t7vVJ22ST7eZu/sLfFL4w/CH9h2PUf2bPM8ReL4fF1xdfELQVjGp3cOnJHGtj5GnOf8Aj2k3zGWWBfMLhQWAXFfQH/BV34QeAf2xPif8YAPC+reD/it8HfAmn+LZvFG9hpGv2bQI50+4RsLFMu5liI+Y7Tk/KVrz39jf/gh38avg18QNY8ceLvBVtqWo+EtKa88L6NZeLVsV1zVTIqxxXFzCweO3Rd0jgEb9oXPUH7L/AGnf2cP2iv2rfiZ8UPB/ivTvDl78CfEHgaNdN09LiGG8j1+O1iliMEqYlG2+DZM7GMxr0rzczzXA083WKwlaGl5Oakk3eUG46N+0tG6imoq2l7xZ7mXZfi6uVfV8XRkr2Sg1daRkk9vcu7NtXd+lmfkN/wAE9rvwpoPi3xhr/jzTf7R8DReHxomsqMedaRapcw2ZuYgeTJAjSSjH/PPqOtez6N8DfB/hzwF4C8DQt4d8W3vw4+N2maV4s1m2kSay8QW2pRhZGBP3rWNYUiz93LOeM5rJh/4N+/2ozEhfwhoXmY+bHiG2645/ioH/AAb6/tPKMDwfoIG0pgeIbYcHqPvdK+vxeZZRWrOrHHwje2nMraK383Zy+9fyo+RweCzOhRVF4GTtfXld9Xft5L7n3KGv/D640rQPj1e6T4LsLjxB4evtDXQILzwxaCeG2e/vY5TFaqzo8bxpEpccugUkDrXYab8Hfgvqd4H13S/DPh/RJ/Hfg628ULa3Obbw/Pc6VeS6lp8NxvZ47I3yW6ylWYRBmUMNorBX/g39/aiRww8J6MGUYDDxJbggYx13Z6cU0f8ABvr+08oGPB2gAAFQB4gtsYPUYzWMsdlUk1/aEFe2qkk9or+b+62uzk/O/RGhmUWn9Qk7X0cfOT7f3rP0+7mvhN8P/El58SPEul/EnwD4Z0y00/w74pudPP8AZFtbxi9h0uSSGOCRDiaKNxE8TZb5iuGO7FS23wv+HWr+F7K5srbR/Dnjfwr8MxqOs6Pqcoez8XpLoplTUbJnJCajDO6+bbkjfsDx/MrpXQt/wb9ftQuiKfCWiFYwFQHxHbkIByAPm4HsKRv+Dff9p9+vg/QTzu58Q2x59fvVvLNMplLmWPpx0taMkl16cz3v+qd7GCwWZJcv1Kctb6x16deXpb9Gecft1eBrDwl4c+Gr6RodrptheeDdAvbqe00qCK3nv5rAPcN9qRjJJMzgmSNlARhnjOK5j/gnf/yf18E/+x70X/0uhr28f8G/X7UAXH/CI6HjJOD4itsZPU43V6b+xb/wQ1/aI+Fn7XXw08U+IfD2gabofhjxNp+sX9wdbhlKw29wkzhUTLMxCEAY6kZIHNXUz/KaWXVKH1uEnyy+0rvR+b1Ob+xM0rZhCv8AVZxXNHo7KzXkfubRRRX8tH9HBRRRQBgfEn4V+GPjJ4ZOi+LvDuh+KNHaaO5Njq1jFeWxljYPG/lyKy7lYAg44Ir4P/ac/wCDYj9ln9oq88X6tZ+GtS8DeLPF2rQas2s6BeNbnTGRl82K2t/9RHHMocMNhwZCwIIFfofRQB+aWkf8GoX7Jlv4p8WXWqaP4w17S/EFpb22nadfeIblx4baPmWW2m3eaXlIUnzWcDkAAHFfdnwN/ZS+G37NFjHD4C8DeFvCZTTrbSnn0zTYbe4uLa3BEKSyqoeTbk8uScsT1Neg0UAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAH//Z" alt="California Northstate University College of Medicine logo" />
+    <h1>M4 Preceptor Evaluation URL Builder</h1>
   </div>
 
-  <div class="row">
-    <label style="min-width: 220px;">
-      Base Zoho Form URL (everything before the <code>?</code>)
-      <input id="baseUrl" value="https://forms.zohopublic.com/CNUCOM/form/CNUCollegeofMedicine1/formperma/3rDhVti_lRn30ObkXtgR3vkZoqfJ_CoOKONdJXPYDsA" />
-    </label>
-  </div>
-
-  <hr style="margin: 18px 0; border:0; border-top:1px solid #eee;" />
-
-  <form id="builder">
+  <form id="builder" class="card" autocomplete="on">
     <div class="grid">
-      <div>
-        <label>Preceptor First Name (pfn)</label>
-        <input name="pfn" placeholder="PreceptorFirst" />
-      </div>
-      <div>
-        <label>Preceptor Last Name (pln)</label>
-        <input name="pln" placeholder="PreceptorLast" />
-      </div>
-      <div>
-        <label>Preceptor Email (pe)</label>
-        <input name="pe" placeholder="Preceptor@email.com" />
-      </div>
-      <div>
-        <label>Preceptor Cell (cell)</label>
-        <input name="cell" placeholder="555-555-5555" />
-      </div>
+      <div><label>Preceptor First Name</label><input name="pfn" /></div>
+      <div><label>Preceptor Last Name</label><input name="pln" id="pln" /></div>
+      <div><label>Preceptor Email</label><input name="pe" id="pe" /></div>
+      <div><label>Preceptor Cell</label><input name="cell" /></div>
+
+      <div><label>Student First Name</label><input name="sfn" id="sfn" /></div>
+      <div><label>Student Last Name</label><input name="sln" id="sln" /></div>
+      <div class="full"><label>Student Email</label><input name="se" id="se" /></div>
+
+      <div><label>Course Name/Number</label><input name="cn" /></div>
+      <div><label>Rotation Site</label><input name="site" /></div>
+
+      <div><label>Rotation Start</label><input name="start" type="date" /></div>
+      <div><label>Rotation End</label><input name="end" type="date" /></div>
 
       <div>
-        <label>Student First Name (sfn)</label>
-        <input name="sfn" placeholder="StudentFirst" />
-      </div>
-      <div>
-        <label>Student Last Name (sln)</label>
-        <input name="sln" placeholder="StudentLast" />
-      </div>
-      <div>
-        <label>Student Email (se)</label>
-        <input name="se" placeholder="student@cnsu.edu" />
-      </div>
-      <div>
-        <label>Course Name/Number (cn)</label>
-        <input name="cn" placeholder="CourseNameNumber" />
-      </div>
-
-      <div class="full">
-        <label>Rotation Site (site)</label>
-        <input name="site" placeholder="RotationSite" />
-      </div>
-
-      <div>
-        <label>Rotation Start (start)</label>
-        <input name="start" placeholder="01/01/2025" />
-      </div>
-      <div>
-        <label>Rotation End (end)</label>
-        <input name="end" placeholder="12/31/2025" />
-      </div>
-
-      <div>
-        <label>“+2 selective” (p2)</label>
+        <label id="p2Label">+2 Selective <span id="warnP2" style="display:none;">⚠️</span></label>
         <select name="p2">
           <option value="">(blank)</option>
           <option value="Internal Medicine">Internal Medicine</option>
@@ -97,99 +68,553 @@
       </div>
 
       <div>
-        <label>Rotation Type (ro)</label>
+        <label id="roLabel">Rotation Type <span id="warnRo" style="display:none;">⚠️</span></label>
         <select name="ro">
           <option value="">(blank)</option>
           <option value="Elective">Elective</option>
           <option value="Sub-internship">Sub-internship</option>
-          <option value="Core">Core</option>
         </select>
       </div>
     </div>
 
+    <div id="dateWarning" class="warning">
+      ⚠️ Dates must be in MM/DD/YYYY format.
+    </div>
+
+
+    <div id="rotTypeBanner" class="warning" style="display:none; background:#fee2e2; border-color:#fecaca; color:#991b1b; font-weight:700;">
+      Select Rotation Type first.
+    </div>
+
+    <hr />
+
     <div class="row">
-      <button class="primary" type="button" id="generateBtn">Generate URL</button>
-      <button class="secondary" type="button" id="copyBtn">Copy to Clipboard</button>
+      <button class="primary" type="button" id="copyEmailBtn">Copy Email Link</button>
+      <button class="secondary" type="button" id="copyUrlBtn">Copy URL Text</button>
+      <button class="secondary" type="button" id="copyFullEmailBtn">Copy Full Email</button>
+      <button class="secondary" type="button" id="pasteBtn" title="Paste a rotation tracker text blob and auto-fill the fields">Paste & Autofill</button>
+    </div>
+
+    <div class="row">
+      <button class="secondary" type="button" id="composeBtn">Compose Email</button>
+      <button class="secondary" type="button" id="composeWebBtn">Compose Email (Outlook Web)</button>
       <button class="secondary" type="reset">Clear</button>
       <span class="toast" id="toast" aria-live="polite"></span>
     </div>
 
-    <div style="margin-top: 12px;">
-      <label>Result</label>
-      <textarea id="result" readonly placeholder="Your generated URL will appear here..."></textarea>
-      <div class="hint">
-        Values are URL-encoded automatically (e.g. <code>@</code> → <code>%40</code>, spaces → <code>%20</code>).
+    
+  <!-- Paste Modal -->
+  <div id="pasteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9999;">
+    <div style="background:#fff; max-width:720px; margin:6vh auto; border-radius:14px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-weight:700;">Paste rotation tracker text</div>
+        <button type="button" id="pasteCloseBtn" class="secondary" style="padding:6px 10px;">Close</button>
       </div>
+      <div style="margin-top:8px; font-size:12px; color:#555;">
+        Paste the student's tracker text (as-is). We'll extract the <b>Update</b> section and fill the form.
+      </div>
+      <textarea id="pasteText" style="width:100%; height:260px; margin-top:8px; padding:10px; border:1px solid #ccc; border-radius:12px; font-size:12px; box-sizing:border-box; resize:vertical;" placeholder="Paste text here..."></textarea>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap;">
+        <button type="button" id="pasteFillBtn" class="primary">Extract & Fill</button>
+        <button type="button" id="pasteClearBtn" class="secondary">Clear</button>
+      </div>
+    </div>
+  </div>
+
+<div class="note">
+      <b>Tip:</b> Use <b>Copy Full Email</b>, then paste directly into Outlook’s message body for a fully formatted email with a real clickable link.
     </div>
   </form>
 
   <script>
+    const BASE_URL = "https://forms.zohopublic.com/CNUCOM/form/CNUCollegeofMedicine1/formperma/3rDhVti_lRn30ObkXtgR3vkZoqfJ_CoOKONdJXPYDsA";
     const form = document.getElementById("builder");
-    const baseUrlInput = document.getElementById("baseUrl");
-    const result = document.getElementById("result");
     const toast = document.getElementById("toast");
-
+    const dateWarning = document.getElementById("dateWarning");
     const AUTO_KEY = "auto";
     const AUTO_VALUE = "Stu";
+
+    const peEl  = document.getElementById("pe");
+    const plnEl = document.getElementById("pln");
+    const sfnEl = document.getElementById("sfn");
+    const slnEl = document.getElementById("sln");
+    const seEl  = document.getElementById("se");
+    const STORAGE_KEY = "m4_eval_builder_student_v1";
+
+    let pasteAutofillUsed = false;
 
     function showToast(msg) {
       toast.textContent = msg;
       setTimeout(() => (toast.textContent = ""), 2200);
     }
 
-    function buildUrl() {
-      const base = (baseUrlInput.value || "").trim();
-      if (!base) return "";
-
-      const fd = new FormData(form);
-      const params = new URLSearchParams();
-
-      // Only include non-empty fields from the form
-      for (const [key, valueRaw] of fd.entries()) {
-        const value = String(valueRaw).trim();
-        if (value !== "") params.set(key, value);
-      }
-
-      // Always add auto=Stu (and force it even if someone later adds an auto field)
-      params.set(AUTO_KEY, AUTO_VALUE);
-
-      const qs = params.toString();
-      return qs ? `${base}?${qs}` : base;
+    function yyyyMmDdToMmDdYyyy(iso) {
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+      if (!m) return null;
+      const [, yyyy, mm, dd] = m;
+      return `${mm}/${dd}/${yyyy}`;
     }
 
-    document.getElementById("generateBtn").addEventListener("click", () => {
-      const url = buildUrl();
-      result.value = url;
-      if (url) showToast("URL generated.");
-    });
+    function buildUrl() {
+      const fd = new FormData(form);
+      const params = new URLSearchParams();
+      let dateError = false;
 
-    document.getElementById("copyBtn").addEventListener("click", async () => {
-      const url = result.value || buildUrl();
-      if (!url) return showToast("Nothing to copy yet.");
-      result.value = url;
+      for (const [key, valueRaw] of fd.entries()) {
+        let value = String(valueRaw).trim();
+        if (value === "") continue;
+
+        if (key === "start" || key === "end") {
+          const converted = yyyyMmDdToMmDdYyyy(value);
+          if (!converted) {
+            dateError = true;
+            continue;
+          }
+          value = converted;
+        }
+        params.set(key, value);
+      }
+
+      dateWarning.style.display = dateError ? "block" : "none";
+      params.set(AUTO_KEY, AUTO_VALUE);
+      return `${BASE_URL}?${params.toString()}`;
+    }
+
+    function buildEmailParts() {
+      const url = buildUrl();
+      const studentName = `${(sfnEl.value||"").trim()} ${(slnEl.value||"").trim()}`.trim();
+      const subject = studentName
+        ? `Thank you! // Evaluation request for ${studentName}`
+        : "Thank you! // Evaluation request";
+
+      const bodyText =
+`Dear Dr. ${(plnEl.value||"").trim()},
+
+Thank you for working with our California Northstate University College of Medicine students and contributing to their education.
+
+Please complete the evaluation for ${studentName} at your earliest convenience.
+
+Click here to access the evaluation form:
+${url}
+
+We greatly value your feedback and support!
+
+Best regards,
+Department of Clinical Education
+California Northstate University College of Medicine`;
+
+      const bodyHtml = `<div>Dear Dr. ${(plnEl.value||"").trim()},</div>
+<br><br>
+<div>Thank you for working with our California Northstate University College of Medicine students and contributing to their education.</div>
+<br><br>
+<div>Please complete the evaluation for <b>${studentName}</b> at your earliest convenience.</div>
+<br><br>
+<div><a href="${url}">Click here to access the evaluation form.</a></div>
+<br><br>
+<div>We greatly value your feedback and support!</div>
+<br><br>
+<div>Best regards,<br>
+Department of Clinical Education<br>
+California Northstate University College of Medicine</div>`;
+
+      return { subject, bodyText, bodyHtml };
+    }
+
+    async function copyFullEmailRich() {
+      const { bodyText, bodyHtml } = buildEmailParts();
 
       try {
-        await navigator.clipboard.writeText(url);
-        showToast("Copied!");
-      } catch (e) {
-        result.focus();
-        result.select();
-        document.execCommand("copy");
-        showToast("Copied (fallback)!");
+        if (window.ClipboardItem) {
+          const item = new ClipboardItem({
+            "text/html": new Blob([bodyHtml], { type: "text/html" }),
+            "text/plain": new Blob([bodyText], { type: "text/plain" })
+          });
+          await navigator.clipboard.write([item]);
+          showToast("Copied full email");
+          return;
+        }
+      } catch {}
+
+      await navigator.clipboard.writeText(bodyText);
+      showToast("Copied full email (plain text)");
+    }
+
+    async function copyPlain(text) {
+      await navigator.clipboard.writeText(text);
+    }
+
+    async function copyEmailLink(url) {
+      const text = "Click here to access the evaluation form.";
+      const html = `<a href="${url}">${text}</a>`;
+      const plain = `${text}: ${url}`;
+
+      if (window.ClipboardItem) {
+        const item = new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([plain], { type: "text/plain" })
+        });
+        await navigator.clipboard.write([item]);
+      } else {
+        await navigator.clipboard.writeText(plain);
       }
+}
+
+    async function composeEmailMailto() {
+      const { subject, bodyText } = buildEmailParts();
+      try { await copyFullEmailRich(); } catch {}
+      const to = peEl.value || "";
+      const cc = seEl.value || "";
+      window.location.href =
+        `mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}&online=1`;
+    }
+
+    function composeEmailOutlookWeb() {
+      copyFullEmailRich();
+      const { subject, bodyText } = buildEmailParts();
+      const preceptor = (peEl.value || "").trim();
+      const student = (seEl.value || "").trim();
+      // Outlook Web is inconsistent with cc= for some tenants, so we place the student as a second "To" recipient.
+      const to = student ? `${preceptor};${student}` : preceptor;
+      // Copy the full rich email body so you can paste once into the message body.
+      copyFullEmailRich();
+      window.open(
+        `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}&popoutv2=1`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+      showToast("Opened Outlook Web (full email copied)");
+    }
+
+    
+    function toggleWarnRo() {
+      const roEl = form.querySelector('[name="ro"]');
+      const w = document.getElementById("warnRo");
+      const banner = document.getElementById("rotTypeBanner");
+      if (!roEl || !w) return;
+      if (!pasteAutofillUsed) return; // only show warnings when Paste & Autofill was used
+      w.style.display = roEl.value ? "none" : "inline";
+      if (roEl.value && banner) banner.style.display = "none";
+    }
+
+    function requireRotationType(actionLabel) {
+      const roEl = form.querySelector('[name="ro"]');
+      const banner = document.getElementById("rotTypeBanner");
+      if (!roEl) return true;
+      if (roEl.value) {
+        if (banner) banner.style.display = "none";
+        return true;
+      }
+      const msg = `Select Rotation Type first to ${actionLabel}`;
+      if (banner) {
+        banner.textContent = msg;
+        banner.style.display = "block";
+      }
+      showToast(msg);
+      roEl.focus();
+      return false;
+    }
+
+    // Keep ⚠️ in sync with Rotation Type selection after Paste & Autofill
+    form.querySelector('[name="ro"]')?.addEventListener("change", toggleWarnRo);
+
+    function toggleWarnP2() {
+      const p2El = form.querySelector('[name="p2"]');
+      const w = document.getElementById("warnP2");
+      if (!p2El || !w) return;
+      if (!pasteAutofillUsed) return;
+      w.style.display = p2El.value ? "none" : "inline";
+    }
+    form.querySelector('[name="p2"]')?.addEventListener("change", toggleWarnP2);
+
+
+    document.getElementById("copyEmailBtn").onclick = async () => {
+      if (!requireRotationType("copy the email link")) return;
+      await copyEmailLink(buildUrl());
+      showToast("Copied email link");
+    };
+
+    document.getElementById("copyUrlBtn").onclick = async () => {
+      if (!requireRotationType("copy the URL")) return;
+      try { await copyPlain(buildUrl()); } catch {}
+      showToast("Copied URL text");
+    };
+
+    document.getElementById("copyFullEmailBtn").onclick = async () => {
+      if (!requireRotationType("copy the full email")) return;
+      await copyFullEmailRich();
+    };
+
+    document.getElementById("composeBtn").onclick = async () => {
+      if (!requireRotationType("compose the email")) return;
+      await composeEmailMailto();
+      showToast("Opening email draft… (full email copied)");
+    };
+
+    document.getElementById("composeWebBtn").onclick = async () => {
+      if (!requireRotationType("open Outlook Web compose")) return;
+      await composeEmailOutlookWeb();
+    };
+
+    loadStudentFields = () => {
+      try {
+        const p = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        if (p.sfn) sfnEl.value = p.sfn;
+        if (p.sln) slnEl.value = p.sln;
+        if (p.se) seEl.value = p.se;
+      } catch {}
+    };
+    saveStudentFields = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ sfn:sfnEl.value, sln:slnEl.value, se:seEl.value }));
+    };
+    [sfnEl, slnEl, seEl].forEach(el => el.addEventListener("input", saveStudentFields));
+    loadStudentFields();
+  form.addEventListener("reset", () => { setTimeout(() => showToast("Cleared"), 0); });
+  
+    // --- Paste & Autofill (student tracker) ---
+    const pasteModal = document.getElementById("pasteModal");
+    const pasteBtn = document.getElementById("pasteBtn");
+    const pasteCloseBtn = document.getElementById("pasteCloseBtn");
+    const pasteFillBtn = document.getElementById("pasteFillBtn");
+    const pasteClearBtn = document.getElementById("pasteClearBtn");
+    const pasteTextEl = document.getElementById("pasteText");
+
+    function openPasteModal() {
+      pasteModal.style.display = "block";
+      setTimeout(() => pasteTextEl.focus(), 50);
+    }
+    function closePasteModal() {
+      pasteModal.style.display = "none";
+    }
+
+    function toIsoDate(mmddyyyy) {
+      const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((mmddyyyy||"").trim());
+      if (!m) return "";
+      const [, mm, dd, yyyy] = m;
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function normalizePhone(text) {
+      const raw = (text || "").trim();
+      // Ignore placeholder patterns like ###-###-####
+      if (/#+\s*-\s*#+\s*-\s*#+/.test(raw)) return "";
+      const digits = raw.replace(/\D/g, "");
+      if (digits.length === 10) return `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6)}`;
+      if (digits.length === 11 && digits[0] === "1") {
+        const d = digits.slice(1);
+        return `${d.slice(0,3)}-${d.slice(3,6)}-${d.slice(6)}`;
+      }
+      return raw;
+    }
+
+    function extractBetween(src, startRe, endRe) {
+      const s = src.search(startRe);
+      if (s < 0) return "";
+      const slice = src.slice(s);
+      const e = slice.search(endRe);
+      return e < 0 ? slice : slice.slice(0, e);
+    }
+
+    function parseStudentBlob(raw) {
+      const text = (raw || "").replace(/\r/g, "");
+      const out = {
+        sfn:"", sln:"", se:"",
+        cn:"", site:"", start:"", end:"",
+        ro:"", p2:"",
+        pfn:"", pln:"", pe:"", cell:""
+      };
+
+      
+      // --- Alternate "value (Label: ...)" format helpers ---
+      const lineValueFor = (labelRegex) => {
+        // Matches: <VALUE> (Label ... )
+        const rx = new RegExp(`^\s*(.+?)\s*\(${labelRegex}\)\s*$`, "im");
+        const mm = text.match(rx);
+        return mm ? (mm[1] || "").trim() : "";
+      };
+// Student email
+      {
+        const m = text.match(/Student Email:\s*\*?Required\s*\n\s*([^\s\n]+@[^\s\n]+)/i) || text.match(/Student Email:\s*([^\s\n]+@[^\s\n]+)/i);
+        if (m) out.se = m[1].trim();
+      }
+      // Student name (alternate tracker format: "First Name:" / "Last Name:")
+      if (!out.sfn) {
+        const m = text.match(/^\s*First Name:\s*\*?Required\s*\n\s*([A-Za-z'-]+)\s*$/im);
+        if (m) out.sfn = m[1].trim();
+      }
+      if (!out.sln) {
+        const m = text.match(/^\s*Last Name:\s*\*?Required\s*\n\s*([A-Za-z'-]+)\s*$/im);
+        if (m) out.sln = m[1].trim();
+      }
+
+
+      // Student name (First/Last)
+      {
+        const m = text.match(/Student Name:\s*\*?\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*First Name\s*\n\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*Last Name/i);
+        if (m) { out.sfn = m[1].trim(); out.sln = m[2].trim(); }
+      }
+
+      // Prefer the "Update" section (single rotation details + preceptor)
+      const updateBlock = extractBetween(text, /\nUpdate\s*\n/i, /\nDone\s*\n/i);
+
+      const block = updateBlock || text;
+
+      // Rotation Name value after "Rotation Name" and possibly "*Required"
+      {
+        const m = block.match(/Rotation Name[^\n]*\n\s*([^\n]+)\n/i);
+        if (m) out.cn = m[1].trim();
+      }
+      // Rotation Site
+      {
+        const m = block.match(/Rotation Site:\s*[^\n]*\n\s*([^\n]+)\n/i);
+        if (m) out.site = m[1].trim();
+      }
+      // Start / End dates
+      {
+        const m = block.match(/Rotation Start(?: Date)?:\s*[^\n]*\n\s*(\d{2}\/\d{2}\/\d{4})/i);
+        if (m) out.start = m[1].trim();
+      }
+      {
+        const m = block.match(/Rotation End(?: Date)?:\s*[^\n]*\n\s*(\d{2}\/\d{2}\/\d{4})/i);
+        if (m) out.end = m[1].trim();
+      }
+
+      // Rotation Type: look for checked/selected line near "Rotation Type"
+      // We'll pick first occurrence of "Elective" or "Sub-internship" after "Rotation Type"
+      {
+        const seg = extractBetween(block, /Rotation Type/i, /Select only if this is intended to satisfy/i);
+        if (/Sub-?internship/i.test(seg)) out.ro = "Sub-internship";
+        else if (/Elective/i.test(seg)) out.ro = "Elective";
+      }
+
+      // +2 Selective
+      {
+        const seg = extractBetween(block, /Select only if this is intended to satisfy/i, /Preceptor Name/i);
+        if (/Internal Medicine\s*\+2/i.test(seg)) out.p2 = "Internal Medicine";
+        else if (/Surgery\s*\+2/i.test(seg)) out.p2 = "Surgery";
+        else out.p2 = "";
+      }
+
+      // Preceptor name
+      {
+        const m = block.match(/Preceptor Name:\s*\*?\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*First Name\s*\n\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*Last Name/i);
+        if (m) { out.pfn = m[1].trim(); out.pln = m[2].trim(); }
+      }
+
+      // Preceptor Email
+      {
+        const m = block.match(/Preceptor Email:\s*\*?\s*Required\s*\n\s*([^\s\n]+@[^\s\n]+)/i) || block.match(/Preceptor Email:\s*\n\s*([^\s\n]+@[^\s\n]+)/i);
+        if (m) out.pe = m[1].trim();
+      }
+
+      // Preceptor phone: capture next ~6 lines after label and normalize
+      {
+        const phoneBlock = extractBetween(block, /Preceptor Phone \(if known\):/i, /Submission Type:/i);
+        if (phoneBlock) out.cell = normalizePhone(phoneBlock);
+      }
+
+      out.ro = "";
+      out.p2 = "";
+      
+      // Student first/last/email (alternate single-line format)
+      if (!out.sfn) out.sfn = lineValueFor("student\\s*First\\s*Name[^\\)]*");
+      if (!out.sln) out.sln = lineValueFor("student\\s*Last\\s*Name[^\\)]*");
+      if (!out.se)  out.se  = lineValueFor("Student\\s*Email[^\\)]*");
+
+      // Rotation fields (alternate single-line format)
+      if (!out.cn)   out.cn   = lineValueFor("Rotation\\s*Name[^\\)]*");
+      if (!out.site) out.site = lineValueFor("Rotation\\s*Site[^\\)]*");
+      if (!out.start) out.start = lineValueFor("Rotation\\s*Start(?:\\s*Date)?[^\\)]*");
+      if (!out.end)   out.end   = lineValueFor("Rotation\\s*End(?:\\s*Date)?[^\\)]*");
+
+      // Preceptor fields (alternate single-line format)
+      if (!out.pfn) out.pfn = lineValueFor("Preceptor\\s*first\\s*Name[^\\)]*");
+      if (!out.pln) out.pln = lineValueFor("Preceptor\\s*Last\\s*Name[^\\)]*");
+      if (!out.pe)  out.pe  = lineValueFor("Preceptor\\s*Email[^\\)]*");
+
+      return out;
+    }
+
+    function fillFromParsed(p) {
+      // Map to form fields (names)
+      const set = (name, val) => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if (!el) return;
+        el.value = val || "";
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      };
+
+      set("sfn", p.sfn);
+      set("sln", p.sln);
+      set("se",  p.se);
+
+      set("cn",  p.cn);
+      set("site",p.site);
+
+      // date inputs want yyyy-mm-dd
+      set("start", toIsoDate(p.start));
+      set("end",   toIsoDate(p.end));
+
+      set("ro", p.ro);
+      set("p2", p.p2);
+
+      set("pfn", p.pfn);
+      set("pln", p.pln);
+      set("pe",  p.pe);
+      set("cell",p.cell);
+
+      // persist student fields
+      saveStudentFields?.();
+    }
+
+    if (pasteBtn) pasteBtn.addEventListener("click", () => openPasteModal());
+    if (pasteCloseBtn) pasteCloseBtn.addEventListener("click", () => closePasteModal());
+    if (pasteModal) pasteModal.addEventListener("click", (e) => { if (e.target === pasteModal) closePasteModal(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && pasteModal && pasteModal.style.display === "block") closePasteModal(); });
+
+    if (pasteClearBtn) pasteClearBtn.addEventListener("click", () => { pasteTextEl.value = ""; pasteTextEl.focus(); });
+
+    if (pasteFillBtn) pasteFillBtn.addEventListener("click", () => {
+      const raw = pasteTextEl.value || "";
+      if (!raw.trim()) { showToast("Paste some text first"); return; }
+      const parsed = parseStudentBlob(raw);
+      fillFromParsed(parsed);
+      pasteAutofillUsed = true;
+      // Show warning icons so user remembers to select these manually
+      const w1 = document.getElementById("warnP2");
+      const w2 = document.getElementById("warnRo");
+      if (w1) w1.style.display = "inline";
+      if (w2) w2.style.display = "inline";
+      toggleWarnRo();
+      toggleWarnP2();
+      closePasteModal();
+      showToast("Filled from pasted text");
     });
 
-    // Live update as user types
-    form.addEventListener("input", () => { result.value = buildUrl(); });
-    baseUrlInput.addEventListener("input", () => { result.value = buildUrl(); });
 
-    // Reset should also refresh result (and keep auto=Stu)
+    // Hide warning emojis on Clear (form reset)
     form.addEventListener("reset", () => {
-      setTimeout(() => { result.value = buildUrl(); }, 0);
+      // Run after the browser clears values
+      setTimeout(() => {
+        const w1 = document.getElementById("warnP2");
+        const w2 = document.getElementById("warnRo");
+        if (w1) w1.style.display = "none";
+        if (w2) w2.style.display = "none";
+      }, 0);
     });
 
-    // Initialize preview
-    result.value = buildUrl();
-  </script>
+
+    // Clear warnings on Clear
+    form.addEventListener("reset", () => {
+      setTimeout(() => {
+        pasteAutofillUsed = false;
+        const w1 = document.getElementById("warnP2");
+        const w2 = document.getElementById("warnRo");
+        if (w1) w1.style.display = "none";
+        if (w2) w2.style.display = "none";
+      }, 0);
+    });
+
+</script>
 </body>
 </html>
