@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>M4 Preceptor Evaluation URL Builder</title>
+  <title>M4 Preceptor Evaluation Link Builder</title>
   <style>
+.btn { background:#eee; color:#000; border:1px solid #ccc; padding:6px 10px; border-radius:999px; cursor:pointer; }
+
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    body { margin: 18px; max-width: 620px; }
+    body { margin: 18px; max-width: 1180px; }
     h1 { margin: 6px 0 8px; font-size: 20px; }
     .header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
     .logo { height: 36px; width: auto; }
@@ -15,7 +17,7 @@
     label { display:block; font-size: 12px; margin-bottom: 4px; color: #222; }
     input, select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 10px; font-size: 13px; box-sizing: border-box; }
     .full { grid-column: 1 / -1; }
-    .row { display:flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+    .row { display:flex; gap: 6px; align-items: center; flex-wrap: nowrap; margin-top: 10px; justify-content: center;}
     button { padding: 7px 10px; border: 0; border-radius: 10px; cursor: pointer; font-size: 13px; }
     button.primary { background: #111; color: #fff; }
     button.secondary { background: #eee; }
@@ -32,31 +34,107 @@
     .warn-emoji { font-size: 14px; vertical-align: middle; }
   
     #rotTypeBanner { font-size: 13px; }
-  </style>
+  
+/* Uniform button width */
+.row button {
+  min-width: 120px;
+  padding: 6px 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Toast display area */
+#toast {
+  min-height: 32px;   /* reserve fixed space so nothing shifts */
+  margin-top: 6px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Keep 3 buttons per row (no wrapping) */
+.row button { flex: 0 0 auto; }
+
+/* Full-width horizontal rules */
+hr {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Make separators reach card edges */
+.card hr {
+  width: calc(100% + 20px);
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+#adminParseBanner { font-size: 13px; }
+
+#studentParseBanner { font-size: 13px; }
+
+#adminPickWrap { max-height: 260px; overflow-y: auto; }
+#adminPickWrap, #adminPickWrap * { font-size: 13px; }
+
+
+#postAdminActions{display:flex;}
+
+/* Center all action button rows */
+.button-row,
+.btn-row,
+.actions-row,
+#topButtons,
+#middleButtons,
+#bottomButtons,
+#postAdminActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* Required field marker */
+.req-asterisk { color: #b30000; font-weight: 700; margin-left: 4px; }
+
+/* Highlight missing required fields */
+.field-error {
+  border: 2px solid #b30000 !important;
+  background: rgba(179,0,0,0.06) !important;
+}
+
+
+/* Reduce paste modal vertical size */
+#pasteModal .modal-content,
+#pasteAdminModal .modal-content {
+  max-height: 45vh;
+}
+</style>
+
 </head>
 <body>
 
   <div class="header">
     <img class="logo" src="data:image/jpeg;base64,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" alt="California Northstate University College of Medicine logo" />
-    <h1>M4 Preceptor Evaluation URL Builder</h1>
+    <h1>M4 Preceptor Evaluation Link Builder</h1>
   </div>
 
   <form id="builder" class="card" autocomplete="on">
     <div class="grid">
-      <div><label>Preceptor First Name</label><input name="pfn" /></div>
-      <div><label>Preceptor Last Name</label><input name="pln" id="pln" /></div>
-      <div><label>Preceptor Email</label><input name="pe" id="pe" /></div>
+      <div><label>Preceptor First Name<span class="req-asterisk">*</span></label><input name="pfn" /></div>
+      <div><label>Preceptor Last Name<span class="req-asterisk">*</span></label><input name="pln" id="pln" /></div>
+      <div><label>Preceptor Email<span class="req-asterisk">*</span></label><input name="pe" id="pe" /></div>
       <div><label>Preceptor Cell</label><input name="cell" /></div>
 
-      <div><label>Student First Name</label><input name="sfn" id="sfn" /></div>
-      <div><label>Student Last Name</label><input name="sln" id="sln" /></div>
-      <div class="full"><label>Student Email</label><input name="se" id="se" /></div>
+      <div><label>Student First Name<span class="req-asterisk">*</span></label><input name="sfn" id="sfn" /></div>
+      <div><label>Student Last Name<span class="req-asterisk">*</span></label><input name="sln" id="sln" /></div>
+      <div class="full"><label>Student Email<span class="req-asterisk">*</span></label><input name="se" id="se" /></div>
 
-      <div><label>Course Name/Number</label><input name="cn" /></div>
-      <div><label>Rotation Site</label><input name="site" /></div>
+      <div><label>Course Name/Number<span class="req-asterisk">*</span></label><input name="cn" /></div>
+      <div><label>Rotation Site<span class="req-asterisk">*</span></label><input name="site" /></div>
 
-      <div><label>Rotation Start</label><input name="start" type="date" /></div>
-      <div><label>Rotation End</label><input name="end" type="date" /></div>
+      <div><label>Rotation Start<span class="req-asterisk">*</span></label><input name="start" type="date" /></div>
+      <div><label>Rotation End<span class="req-asterisk">*</span></label><input name="end" type="date" /></div>
 
       <div>
         <label id="p2Label">+2 Selective <span id="warnP2" style="display:none;">⚠️</span></label>
@@ -68,7 +146,7 @@
       </div>
 
       <div>
-        <label id="roLabel">Rotation Type <span id="warnRo" style="display:none;">⚠️</span></label>
+        <label id="roLabel">Rotation Type<span class="req-asterisk">*</span> <span id="warnRo" style="display:none;">⚠️</span></label>
         <select name="ro">
           <option value="">(blank)</option>
           <option value="Elective">Elective</option>
@@ -80,59 +158,118 @@
     <div id="dateWarning" class="warning">
       ⚠️ Dates must be in MM/DD/YYYY format.
     </div>
+<div class="row">
+      <button class="secondary" type="button" id="pasteStudentBtn" title="Paste a student's tracker text blob and auto-fill the fields">📋 Paste &amp; Autofill</button>
 
+    </div>
+<div id="postAdminActions" >
+<div class="row">
+      <button class="secondary" type="button" id="composeBtn">📧 Email (Client)</button>
+      <button class="secondary" type="button" id="composeWebBtn">🌐 Email (Web)</button>
+      <button class="secondary" type="button" id="copyFullEmailBtn">📋 Email (Clipboard)</button>
+      <button class="secondary" type="button" id="copyEmailBtn" class="btn">🔗 Create Link</button>
+    </div>
+</div>
+<div class="row">
+      <button class="secondary" type="reset">🧹 Clear Form</button>
+    </div>
 
-    <div id="rotTypeBanner" class="warning" style="display:none; background:#fee2e2; border-color:#fecaca; color:#991b1b; font-weight:700;">
+  <div id="rotTypeBanner" class="warning" style="display:none; background:#fee2e2; border-color:#fecaca; color:#991b1b; font-weight:700;">
       Select Rotation Type first.
     </div>
-
-    <hr />
-
-    <div class="row">
-      <button class="primary" type="button" id="copyEmailBtn">Copy Email Link</button>
-      <button class="secondary" type="button" id="copyUrlBtn">Copy URL Text</button>
-      <button class="secondary" type="button" id="copyFullEmailBtn">Copy Full Email</button>
-      <button class="secondary" type="button" id="pasteBtn" title="Paste a rotation tracker text blob and auto-fill the fields">Paste & Autofill</button>
+  
+  
+  <details class="note" id="instructionsDetails" open>
+    <summary style="cursor:pointer; font-weight:700; margin-bottom:6px;">
+      Instructions <span style="font-weight:400;">(click to expand / collapse)</span>
+    </summary>
+    <div style="margin-top:6px;">
+      • <b>📋 Paste &amp; Autofill</b> — Paste your tracker information to automatically fill the form.<br>
+      • <b>📧 Email (Client)</b> — Opens a new email with recipients and subject filled; paste the email content from your clipboard.<br>
+      • <b>🌐 Email (Web)</b> — Opens Outlook Web with recipients and subject filled; paste the email content from your clipboard.<br>
+      • <b>📋 Email (Clipboard)</b> — Copy the complete email text for manual pasting.<br>
+      • <b>🔗 Create Link</b> — Generate and copy the evaluation link.<br>
+      • <b>🧹 Clear Form</b> — Clear all fields and start over.
     </div>
+  </details>
 
-    <div class="row">
-      <button class="secondary" type="button" id="composeBtn">Compose Email</button>
-      <button class="secondary" type="button" id="composeWebBtn">Compose Email (Outlook Web)</button>
-      <button class="secondary" type="reset">Clear</button>
-      <span class="toast" id="toast" aria-live="polite"></span>
-    </div>
 
-    
-  <!-- Paste Modal -->
+  <div id="toast" class="toast"></div>
+
+  
+
+  
+
+<!-- Paste Modal -->
   <div id="pasteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9999;">
     <div style="background:#fff; max-width:720px; margin:6vh auto; border-radius:14px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:700;">Paste rotation tracker text</div>
-        <button type="button" id="pasteCloseBtn" class="secondary" style="padding:6px 10px;">Close</button>
-      </div>
+        <div style="font-weight:700;">Paste rotation tracker text below</div>
+        </div>
       <div style="margin-top:8px; font-size:12px; color:#555;">
-        Paste the student's tracker text (as-is). We'll extract the <b>Update</b> section and fill the form.
+        Paste the entire contents of the tracker. The rotation information will be extracted and the form will be filled. Remember to select +2 if applicable and the rotation type (elective vs sub-internship).</div>
+      <textarea id="pasteText" style="width:100%; height: 65px; margin-top:8px; padding:10px; border:1px solid #ccc; border-radius:12px; font-size:12px; box-sizing:border-box; resize:vertical;" placeholder="Paste tracker text here..."></textarea>
+      <div id="studentParseBanner" class="warning" style="display:none; margin-top:10px; background:#fee2e2; border-color:#fecaca; color:#991b1b; font-weight:700; font-size:13px;">
+        No rotations found.
       </div>
-      <textarea id="pasteText" style="width:100%; height:260px; margin-top:8px; padding:10px; border:1px solid #ccc; border-radius:12px; font-size:12px; box-sizing:border-box; resize:vertical;" placeholder="Paste text here..."></textarea>
+
       <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap;">
-        <button type="button" id="pasteFillBtn" class="primary">Extract & Fill</button>
-        <button type="button" id="pasteClearBtn" class="secondary">Clear</button>
+<button type="button" id="pasteClearBtn" class="secondary">Clear</button>
+        <button type="button" id="pasteCloseBtn" class="secondary" style="padding:6px 10px;">Close</button>
       </div>
     </div>
   </div>
 
-<div class="note">
-      <b>Tip:</b> Use <b>Copy Full Email</b>, then paste directly into Outlook’s message body for a fully formatted email with a real clickable link.
-    </div>
   </form>
 
-  <script>
+  
+
+  <!-- Admin Paste Modal -->
+  <div id="pasteAdminModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:10001;">
+    <div style="background:#fff; max-width:760px; margin:6vh auto; border-radius:14px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-weight:700;">Paste rotation tracker text below</div>
+        </div>
+      <div style="margin-top:8px; font-size:12px; color:#555;">
+        Paste the entire contents of the tracker. The rotation information will be extracted and the form will be filled. Remember to select +2 if applicable and the rotation type (elective vs sub-internship).
+      </div>
+      <textarea id="pasteAdminText" style="width:100%; height: 60px; margin-top:8px; padding:10px; border:1px solid #ccc; border-radius:12px; font-size:12px; box-sizing:border-box; resize:vertical;" placeholder="Paste tracker text here..."></textarea>
+
+      <div id="adminPickWrap" >
+        <div style="font-weight:700; margin-bottom:6px;">Select a rotation to import</div>
+        <div id="adminRotationList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+      <div id="adminParseBanner" class="warning" style="display:none; margin-top:10px; background:#fee2e2; border-color:#fecaca; color:#991b1b; font-weight:700;">
+        No rotations found.
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap;">
+        <button type="button" id="pasteAdminParseBtn" class="primary" style="display:none;">Extract &amp; Fill</button>
+        <button type="button" id="pasteAdminClearBtn" class="secondary">Clear</button>
+        <button type="button" id="pasteAdminCloseBtn" class="secondary" style="padding:6px 10px;">Close</button>
+      </div>
+    </div>
+
+<script>
+    function getPreceptorEmailValue() {
+      const el = document.getElementById("pe") || (typeof peEl !== "undefined" ? peEl : null);
+      return (el && typeof el.value === "string") ? el.value.trim() : "";
+    }
+
     const BASE_URL = "https://forms.zohopublic.com/CNUCOM/form/CNUCollegeofMedicine1/formperma/3rDhVti_lRn30ObkXtgR3vkZoqfJ_CoOKONdJXPYDsA";
     const form = document.getElementById("builder");
-    const toast = document.getElementById("toast");
+    
+    let adminImportUsed = false; // becomes true when Admin paste/selection is used
+
+    // Remember last successful paste (student vs admin) and the last pasted text
+    let lastPasteMode = "student";
+    let lastStudentRaw = "";
+    let lastAdminRaw = "";
+const toast = document.getElementById("toast");
     const dateWarning = document.getElementById("dateWarning");
     const AUTO_KEY = "auto";
-    const AUTO_VALUE = "Stu";
+    const AUTO_VALUE_STUDENT = "S";
+    const AUTO_VALUE_ADMIN = "A";
 
     const peEl  = document.getElementById("pe");
     const plnEl = document.getElementById("pln");
@@ -176,18 +313,17 @@
       }
 
       dateWarning.style.display = dateError ? "block" : "none";
-      params.set(AUTO_KEY, AUTO_VALUE);
+      params.set(AUTO_KEY, (adminImportUsed ? AUTO_VALUE_ADMIN : AUTO_VALUE_STUDENT));
       return `${BASE_URL}?${params.toString()}`;
     }
 
     function buildEmailParts() {
       const url = buildUrl();
       const studentName = `${(sfnEl.value||"").trim()} ${(slnEl.value||"").trim()}`.trim();
-      const subject = studentName
-        ? `Thank you! // Evaluation request for ${studentName}`
-        : "Thank you! // Evaluation request";
-
-      const bodyText =
+      const subject = adminImportUsed
+        ? `Evaluation request for ${studentName || "student"}`
+        : `Evaluation request for ${studentName || "your student"}`;
+const bodyText = adminImportUsed ?
 `Dear Dr. ${(plnEl.value||"").trim()},
 
 Thank you for working with our California Northstate University College of Medicine students and contributing to their education.
@@ -201,44 +337,145 @@ We greatly value your feedback and support!
 
 Best regards,
 Department of Clinical Education
-California Northstate University College of Medicine`;
+California Northstate University College of Medicine`
+:
+`Dear Dr. ${(plnEl.value||"").trim()},
 
-      const bodyHtml = `<div>Dear Dr. ${(plnEl.value||"").trim()},</div>
-<br><br>
-<div>Thank you for working with our California Northstate University College of Medicine students and contributing to their education.</div>
-<br><br>
-<div>Please complete the evaluation for <b>${studentName}</b> at your earliest convenience.</div>
-<br><br>
-<div><a href="${url}">Click here to access the evaluation form.</a></div>
-<br><br>
-<div>We greatly value your feedback and support!</div>
-<br><br>
-<div>Best regards,<br>
-Department of Clinical Education<br>
-California Northstate University College of Medicine</div>`;
+Thank you for working with me and for your guidance and mentorship during my rotation. I would greatly appreciate it if you could take a moment to evaluate my performance.
 
-      return { subject, bodyText, bodyHtml };
+Please click here to access the evaluation form at your earliest convenience.
+${url}
+
+Thank you very much for your time, feedback, and support.`;
+      const bodyHtml = adminImportUsed ?
+`<div>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">Dear Dr. ${(plnEl.value||"").trim()},<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">Thank you for working with our California Northstate University College of Medicine students and contributing to their education.<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">Please complete the evaluation for <b>${studentName}</b> at your earliest convenience.<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><a href="${url}">Click here to access the evaluation form.</a><o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">We greatly value your feedback and support!<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">Best regards,<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">Department of Clinical Education<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">California Northstate University College of Medicine<o:p></o:p></p>
+</div>`
+:
+`<div>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">Dear Dr. ${(plnEl.value||"").trim()},<o:p></o:p></p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">
+    Thank you for working with me and for your guidance and mentorship during my rotation. I would greatly appreciate it if you could take a moment to evaluate my performance.<o:p></o:p>
+  </p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">
+    Please click here to access the evaluation form at your earliest convenience.<o:p></o:p>
+  </p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">
+    <a href="${url}">Click here to access the evaluation form.</a><o:p></o:p>
+  </p>
+  <p class="MsoNormal" style="margin:0in;line-height:normal;"><o:p>&nbsp;</o:p></p>
+
+  <p class="MsoNormal" style="margin:0in;line-height:normal;">
+    Thank you very much for your time, feedback, and support.<o:p></o:p>
+  </p>
+</div>`;
+return { subject, bodyText, bodyHtml };
     }
 
-    async function copyFullEmailRich() {
-      const { bodyText, bodyHtml } = buildEmailParts();
-
+    
+    async function copyRichToClipboard(htmlStr, plainStr) {
+      // Primary: async clipboard API with HTML
       try {
-        if (window.ClipboardItem) {
+        if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
           const item = new ClipboardItem({
-            "text/html": new Blob([bodyHtml], { type: "text/html" }),
-            "text/plain": new Blob([bodyText], { type: "text/plain" })
+            "text/html": new Blob([htmlStr], { type: "text/html" }),
+            "text/plain": new Blob([plainStr], { type: "text/plain" })
           });
           await navigator.clipboard.write([item]);
-          showToast("Copied full email");
-          return;
+          return true;
         }
       } catch {}
 
-      await navigator.clipboard.writeText(bodyText);
-      showToast("Copied full email (plain text)");
+      // Fallback: execCommand('copy') using a temporary selection + copy event
+      try {
+        let ok = false;
+        const listener = (e) => {
+          try {
+            e.clipboardData.setData("text/html", htmlStr);
+            e.clipboardData.setData("text/plain", plainStr);
+            e.preventDefault();
+            ok = true;
+          } catch {}
+        };
+        document.addEventListener("copy", listener);
+        const el = document.createElement("div");
+        el.setAttribute("contenteditable", "true");
+        el.style.position = "fixed";
+        el.style.left = "-9999px";
+        el.style.top = "0";
+        el.innerHTML = htmlStr;
+        document.body.appendChild(el);
+
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        document.execCommand("copy");
+        sel.removeAllRanges();
+        document.removeEventListener("copy", listener);
+        document.body.removeChild(el);
+
+        if (ok) return true;
+      } catch {}
+
+      // Last resort: plain text only
+      try {
+        await navigator.clipboard.writeText(plainStr);
+        return true;
+      } catch {}
+
+      return false;
     }
 
+async function copyFullEmailRich() {
+      const { bodyText, bodyHtml } = buildEmailParts();
+      const ok = await copyRichToClipboard(bodyHtml, bodyText);
+      if (ok) showToast("Copied full email");
+      else showToast("Copy failed");
+    }
+
+
+
+async function copyEmailPackageToClipboard() {
+      const { subject, bodyText } = buildEmailParts();
+      const to = (getPreceptorEmailValue && getPreceptorEmailValue()) ? getPreceptorEmailValue() : ((peEl && peEl.value) ? peEl.value : "");
+      const cc = adminImportUsed ? ((seEl && seEl.value) ? seEl.value.trim() : "") : "";
+      const lines = [];
+      lines.push(`To: ${(to || "").trim()}`);
+      if ((cc || "").trim()) lines.push(`Cc: ${cc.trim()}`);
+      lines.push(`Subject: ${subject}`);
+      lines.push("");
+      lines.push(bodyText);
+      try {
+        await navigator.clipboard.writeText(lines.join("\n"));
+        if (typeof showToast === "function") showToast("Copied full email details");
+      } catch {
+        if (typeof showToast === "function") showToast("Copy failed");
+      }
+    }
     async function copyPlain(text) {
       await navigator.clipboard.writeText(text);
     }
@@ -247,41 +484,38 @@ California Northstate University College of Medicine</div>`;
       const text = "Click here to access the evaluation form.";
       const html = `<a href="${url}">${text}</a>`;
       const plain = `${text}: ${url}`;
-
-      if (window.ClipboardItem) {
-        const item = new ClipboardItem({
-          "text/html": new Blob([html], { type: "text/html" }),
-          "text/plain": new Blob([plain], { type: "text/plain" })
-        });
-        await navigator.clipboard.write([item]);
-      } else {
-        await navigator.clipboard.writeText(plain);
-      }
-}
+      const ok = await copyRichToClipboard(html, plain);
+      if (!ok) throw new Error("copy failed");
+    }
 
     async function composeEmailMailto() {
       const { subject, bodyText } = buildEmailParts();
       try { await copyFullEmailRich(); } catch {}
-      const to = peEl.value || "";
-      const cc = seEl.value || "";
-      window.location.href =
-        `mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}&online=1`;
-    }
+      const to = getPreceptorEmailValue();
+      if (!to) { showToast("Enter Preceptor Email first."); return; }
+const cc = adminImportUsed ? (seEl.value || "") : "";
+      const q = [];
+      if (cc) q.push(`cc=${encodeURIComponent(cc)}`);
+      q.push(`subject=${encodeURIComponent(subject)}`);
+      q.push(`body=`);
+      window.location.href = `mailto:${encodeURIComponent(to)}?${q.join("&")}`;
+}
 
-    function composeEmailOutlookWeb() {
-      copyFullEmailRich();
+    async function composeEmailOutlookWeb() {
+      // Copy the full rich email body to clipboard (same as "Copy Full Email")
+      try { await copyFullEmailRich(); } catch {}
+
       const { subject, bodyText } = buildEmailParts();
-      const preceptor = (peEl.value || "").trim();
-      const student = (seEl.value || "").trim();
-      // Outlook Web is inconsistent with cc= for some tenants, so we place the student as a second "To" recipient.
-      const to = student ? `${preceptor};${student}` : preceptor;
-      // Copy the full rich email body so you can paste once into the message body.
-      copyFullEmailRich();
-      window.open(
-        `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}&popoutv2=1`,
-        "_blank",
-        "noopener,noreferrer"
-      );
+      const preceptor = getPreceptorEmailValue();
+      if (!preceptor) { showToast("Enter Preceptor Email first."); return; }
+const student = (seEl.value || "").trim();
+      // In Student/manual mode, do not include the student email address.
+      const to = adminImportUsed ? (student ? `${preceptor};${student}` : preceptor) : preceptor;
+
+      const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&popoutv2=1`;
+
+      // Try to force a separate window (browser settings may still open a tab)
+      window.open(outlookUrl, "outlookCompose", "popup=yes,noopener,noreferrer,width=950,height=750");
       showToast("Opened Outlook Web (full email copied)");
     }
 
@@ -297,20 +531,57 @@ California Northstate University College of Medicine</div>`;
     }
 
     function requireRotationType(actionLabel) {
-      const roEl = form.querySelector('[name="ro"]');
+      const rt = document.querySelector('select[name="ro"]')?.value;
+      return !!(rt && rt.trim());
+    }
+
+    function validateRequiredFields(actionLabel) {
+      const form = document.getElementById("builder");
       const banner = document.getElementById("rotTypeBanner");
-      if (!roEl) return true;
-      if (roEl.value) {
+
+      // Clear previous highlights
+      form?.querySelectorAll(".field-error").forEach(el => el.classList.remove("field-error"));
+
+      const getEl = (name) => form?.querySelector(`[name="${name}"]`);
+      const getVal = (name) => (getEl(name)?.value || "").trim();
+
+      // Everything required except: preceptor cell (pc) and +2 selective (p2)
+      const required = [
+        ["pfn", "Preceptor First Name"],
+        ["pln", "Preceptor Last Name"],
+        ["pe",  "Preceptor Email"],
+        ["sfn", "Student First Name"],
+        ["sln", "Student Last Name"],
+        ["se",  "Student Email"],
+        ["cn",  "Clerkship / Rotation"],
+        ["site","Site"],
+        ["start","Start Date"],
+        ["end", "End Date"],
+        ["ro",  "Rotation Type"]
+      ];
+
+      let hasMissing = false;
+      for (const [nm] of required) {
+        const v = getVal(nm);
+        if (!v) {
+          hasMissing = true;
+          const el = getEl(nm);
+          if (el) el.classList.add("field-error");
+        }
+      }
+
+      if (!hasMissing) {
         if (banner) banner.style.display = "none";
         return true;
       }
-      const msg = `Select Rotation Type first to ${actionLabel}`;
+
+      const msg = "Please complete all required fields before continuing.";
       if (banner) {
         banner.textContent = msg;
         banner.style.display = "block";
+      } else if (typeof showToast === "function") {
+        showToast(msg);
       }
-      showToast(msg);
-      roEl.focus();
       return false;
     }
 
@@ -326,32 +597,39 @@ California Northstate University College of Medicine</div>`;
     }
     form.querySelector('[name="p2"]')?.addEventListener("change", toggleWarnP2);
 
-
     document.getElementById("copyEmailBtn").onclick = async () => {
-      if (!requireRotationType("copy the email link")) return;
+      if (!validateRequiredFields("🔗 Create Link")) return;
+
+      if (!requireRotationType("🔗 Create Link")) return;
+const roEl = form.querySelector('[name="ro"]');
+      const banner = document.getElementById("rotTypeBanner");
+      if (roEl && !roEl.value) {
+        if (banner) { banner.textContent = "A rotation type is required. Please choose Elective or Sub-internship."; banner.style.display = "block"; }
+        return;
+      }
+      if (banner) banner.style.display = "none";
       await copyEmailLink(buildUrl());
-      showToast("Copied email link");
+      showToast("Link created and copied to clipboard.");
     };
+document.getElementById("copyFullEmailBtn").onclick = async () => {
+      if (!validateRequiredFields("📋 Email (Clipboard)")) return;
 
-    document.getElementById("copyUrlBtn").onclick = async () => {
-      if (!requireRotationType("copy the URL")) return;
-      try { await copyPlain(buildUrl()); } catch {}
-      showToast("Copied URL text");
-    };
-
-    document.getElementById("copyFullEmailBtn").onclick = async () => {
-      if (!requireRotationType("copy the full email")) return;
+      if (!requireRotationType("📋 Email (Clipboard)")) return;
       await copyFullEmailRich();
     };
 
     document.getElementById("composeBtn").onclick = async () => {
-      if (!requireRotationType("compose the email")) return;
+      if (!validateRequiredFields("📧 Email (Client)")) return;
+
+      if (!requireRotationType("📧 Email (Client)")) return;
       await composeEmailMailto();
       showToast("Opening email draft… (full email copied)");
     };
 
     document.getElementById("composeWebBtn").onclick = async () => {
-      if (!requireRotationType("open Outlook Web compose")) return;
+      if (!validateRequiredFields("🌐 Email (Web)")) return;
+
+      if (!requireRotationType("🌐 Email (Web)")) return;
       await composeEmailOutlookWeb();
     };
 
@@ -372,18 +650,125 @@ California Northstate University College of Medicine</div>`;
   
     // --- Paste & Autofill (student tracker) ---
     const pasteModal = document.getElementById("pasteModal");
-    const pasteBtn = document.getElementById("pasteBtn");
+    const pasteStudentBtn = document.getElementById("pasteStudentBtn");
     const pasteCloseBtn = document.getElementById("pasteCloseBtn");
     const pasteFillBtn = document.getElementById("pasteFillBtn");
     const pasteClearBtn = document.getElementById("pasteClearBtn");
     const pasteTextEl = document.getElementById("pasteText");
+      
+    // Student modal: auto-parse + fill + close as soon as valid rotation data is detected.
+    // The student's pasted text always represents a single rotation.
+    let studentAutoParseTimer = null;
+
+                function isAdminPasteText(raw) {
+      const t = (raw || "").trim();
+      if (!t) return false;
+
+      // Immediate admin signals (prefer these even if other words overlap)
+      if (/(Records\s+per\s+page|Show\s+Details|\bZoho\b)/i.test(t)) return true;
+      if (/\b\d+\s+to\s+\d+\s+of\s+\d+\b/i.test(t)) return true;
+
+      // Explicit student tracker signals -> NOT admin
+      if (/(M4\s+Rotation\s+Tracker|Rotation\s+Information|Student\s+ID\s+Number|Student\s+Email|Rotation\s+Name\s+|Rotation\s+Site:|Rotation\s+Start\s+Date:|Rotation\s+End\s+Date:)/i.test(t)) return false;
+
+      // Pipe-delimited rows with date ranges are typical of admin exports
+      const pipeCount = (t.match(/\|/g) || []).length;
+      if (pipeCount >= 4 && /\d{2}\/\d{2}\/\d{4}\s*\|\s*\d{2}\/\d{2}\/\d{4}/.test(t)) return true;
+
+      // Another admin pattern: many pipe columns and at least one email address
+      if (pipeCount >= 6 && /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(t)) return true;
+
+      return false;
+    }function tryStudentAutoParse() {
+      const raw = (pasteTextEl?.value || "").trim();
+      if (!raw) return;
+
+      
+
+      // Combined paste: if admin export is pasted here, route to admin modal automatically.
+      if (isAdminPasteText(raw)) {
+        lastAdminRaw = raw;
+
+        const adminTa = document.getElementById("pasteAdminText");
+        if (adminTa) adminTa.value = raw;
+
+        closePasteModal();
+        if (typeof openPasteAdminModal === "function") openPasteAdminModal();
+        // Trigger parse immediately so rotations appear without another click
+        setTimeout(() => document.getElementById("pasteAdminParseBtn")?.click(), 0);
+        return;
+      }// Some student tracker exports end with a footer ("Total Credits Estimate ... Update")
+      // which indicates the paste is incomplete / not in the expected single-rotation format.
+      if (/\bUpdate\s*$/i.test(raw)) {
+        if (typeof studentParseBanner !== "undefined" && studentParseBanner) {
+          studentParseBanner.textContent = "No rotations found.";
+          studentParseBanner.style.display = "block";
+        }
+        return;
+      }
+
+      const parsed = parseStudentBlob(raw);
+      const hasRotationInfo = !!(parsed && (
+        (parsed.cn || "").trim() ||
+        (parsed.site || "").trim() ||
+        (parsed.start || "").trim() ||
+        (parsed.end || "").trim() ||
+        (parsed.pe || "").trim()
+      ));
+
+      if (!hasRotationInfo) {
+        // If the pasted text doesn't contain a single-rotation block we can extract,
+        // show a clear message in the student modal.
+        if (typeof studentParseBanner !== "undefined" && studentParseBanner) {
+          studentParseBanner.textContent = "No rotations found.";
+          studentParseBanner.style.display = "block";
+        }
+        return;
+      }
+
+      // Success: fill form, mark as paste-used, set warnings, clear highlights, close modal
+      fillFromParsed(parsed);
+      pasteAutofillUsed = true;
+
+      
+      // Remember last successful student paste
+      lastPasteMode = "student";
+      lastStudentRaw = raw;
+      // Student paste -> use student template
+      adminImportUsed = false;
+const w1 = document.getElementById("warnP2");
+      const w2 = document.getElementById("warnRo");
+      if (w1) w1.style.display = "inline";
+      if (w2) w2.style.display = "inline";
+      toggleWarnRo();
+      toggleWarnP2();
+
+      if (typeof refreshFieldErrors === "function") refreshFieldErrors();
+      closePasteModal();
+    }
+
+    if (pasteTextEl) {
+      pasteTextEl.addEventListener("input", () => {
+        if (studentAutoParseTimer) clearTimeout(studentAutoParseTimer);
+        // debounce to allow paste to complete
+        studentAutoParseTimer = setTimeout(tryStudentAutoParse, 150);
+      });
+    }
+const studentParseBanner = document.getElementById("studentParseBanner");
+
+      pasteTextEl?.addEventListener("input", () => { if (studentParseBanner) studentParseBanner.style.display = "none"; });
 
     function openPasteModal() {
       pasteModal.style.display = "block";
       setTimeout(() => pasteTextEl.focus(), 50);
     }
     function closePasteModal() {
-      pasteModal.style.display = "none";
+      // Remember what's currently in the combined paste box
+      const ta = document.getElementById("pasteText");
+      if (ta) lastStudentRaw = (ta.value || "").trim();
+
+      const m = document.getElementById("pasteModal");
+      if (m) m.style.display = "none";
     }
 
     function toIsoDate(mmddyyyy) {
@@ -446,10 +831,9 @@ California Northstate University College of Medicine</div>`;
         if (m) out.sln = m[1].trim();
       }
 
-
       // Student name (First/Last)
       {
-        const m = text.match(/Student Name:\s*\*?\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*First Name\s*\n\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*Last Name/i);
+        const m = text.match(/Student Name:\s*\*?\s*Required\s*\n\s*([A-Za-z' -]+)\s*\n\s*First Name\s*\n\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*Last Name/i);
         if (m) { out.sfn = m[1].trim(); out.sln = m[2].trim(); }
       }
 
@@ -496,7 +880,7 @@ California Northstate University College of Medicine</div>`;
 
       // Preceptor name
       {
-        const m = block.match(/Preceptor Name:\s*\*?\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*First Name\s*\n\s*Required\s*\n\s*([A-Za-z'-]+)\s*\n\s*Last Name/i);
+        const m = block.match(/Preceptor Name:\s*\*?\s*Required\s*\n\s*([A-Za-z\' -]+)\s*\n\s*First Name\s*\n\s*Required\s*\n\s*([A-Za-z\'.\' -]+)\s*\n\s*Last Name/i);
         if (m) { out.pfn = m[1].trim(); out.pln = m[2].trim(); }
       }
 
@@ -508,7 +892,7 @@ California Northstate University College of Medicine</div>`;
 
       // Preceptor phone: capture next ~6 lines after label and normalize
       {
-        const phoneBlock = extractBetween(block, /Preceptor Phone \(if known\):/i, /Submission Type:/i);
+        const phoneBlock = extractBetween(block, /Preceptor Phone \(if known\):/i, /(Submission Type:|Submission Notes:|Credits Anticipated|Credits:|Done\b|Rotation End:|Rotation Type:)/i);
         if (phoneBlock) out.cell = normalizePhone(phoneBlock);
       }
 
@@ -565,32 +949,35 @@ California Northstate University College of Medicine</div>`;
 
       // persist student fields
       saveStudentFields?.();
-    }
+    
+  refreshFieldErrors();
+}
 
-    if (pasteBtn) pasteBtn.addEventListener("click", () => openPasteModal());
-    if (pasteCloseBtn) pasteCloseBtn.addEventListener("click", () => closePasteModal());
+    if (pasteStudentBtn) pasteStudentBtn.addEventListener("click", () => {
+        // Restore previous paste content and, if applicable, previously parsed rotations.
+        if (lastPasteMode === "admin" && typeof adminParsed !== "undefined" &&
+            adminParsed && Array.isArray(adminParsed.rotations) && adminParsed.rotations.length > 0) {
+          const adminTa = document.getElementById("pasteAdminText");
+          if (adminTa && lastAdminRaw) adminTa.value = lastAdminRaw;
+          openPasteAdminModal(); // will re-show the existing rotation list
+          return;
+        }
+
+        const ta = document.getElementById("pasteText");
+        if (ta && lastStudentRaw) ta.value = lastStudentRaw;
+        openPasteModal();
+      });
+if (pasteCloseBtn) pasteCloseBtn.addEventListener("click", () => closePasteModal());
     if (pasteModal) pasteModal.addEventListener("click", (e) => { if (e.target === pasteModal) closePasteModal(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && pasteModal && pasteModal.style.display === "block") closePasteModal(); });
 
-    if (pasteClearBtn) pasteClearBtn.addEventListener("click", () => { pasteTextEl.value = ""; pasteTextEl.focus(); });
+    if (pasteClearBtn) pasteClearBtn.addEventListener("click", () => {
+        if (typeof studentParseBanner !== "undefined" && studentParseBanner) {
+          studentParseBanner.style.display = "none";
+        }
+ pasteTextEl.value = ""; pasteTextEl.focus(); });
 
-    if (pasteFillBtn) pasteFillBtn.addEventListener("click", () => {
-      const raw = pasteTextEl.value || "";
-      if (!raw.trim()) { showToast("Paste some text first"); return; }
-      const parsed = parseStudentBlob(raw);
-      fillFromParsed(parsed);
-      pasteAutofillUsed = true;
-      // Show warning icons so user remembers to select these manually
-      const w1 = document.getElementById("warnP2");
-      const w2 = document.getElementById("warnRo");
-      if (w1) w1.style.display = "inline";
-      if (w2) w2.style.display = "inline";
-      toggleWarnRo();
-      toggleWarnP2();
-      closePasteModal();
-      showToast("Filled from pasted text");
-    });
-
+    if (pasteFillBtn) pasteFillBtn.addEventListener("click", () => { tryStudentAutoParse(); });
 
     // Hide warning emojis on Clear (form reset)
     form.addEventListener("reset", () => {
@@ -603,7 +990,6 @@ California Northstate University College of Medicine</div>`;
       }, 0);
     });
 
-
     // Clear warnings on Clear
     form.addEventListener("reset", () => {
       setTimeout(() => {
@@ -615,6 +1001,368 @@ California Northstate University College of Medicine</div>`;
       }, 0);
     });
 
+    /* ADMIN_PASTE_WIRED */
+    (function(){
+      const pasteAdminBtn = document.getElementById("pasteAdminBtn");
+      const pasteAdminModal = document.getElementById("pasteAdminModal");
+      const pasteAdminCloseBtn = document.getElementById("pasteAdminCloseBtn");
+      const pasteAdminParseBtn = document.getElementById("pasteAdminParseBtn");
+      const pasteAdminClearBtn = document.getElementById("pasteAdminClearBtn");
+      const pasteAdminTextEl = document.getElementById("pasteAdminText");
+      
+      // Auto-parse admin text on paste/typing (parse button is hidden)
+      let _adminAutoParseT = null;
+      pasteAdminTextEl?.addEventListener("input", () => {
+        if (_adminAutoParseT) clearTimeout(_adminAutoParseT);
+        _adminAutoParseT = setTimeout(() => {
+          try { pasteAdminParseBtn?.click(); } catch (e) {}
+        }, 150);
+      });
+const adminParseBanner = document.getElementById("adminParseBanner");
+pasteAdminTextEl?.addEventListener("input", () => { if (adminParseBanner) adminParseBanner.style.display = "none"; });
+const adminPickWrap = document.getElementById("adminPickWrap");
+      const adminRotationList = document.getElementById("adminRotationList");
+
+      let adminParsed = null;
+
+      function betweenText(src, a, b) {
+        const s = src.indexOf(a);
+        if (s < 0) return "";
+        const t = src.slice(s);
+        const e = t.indexOf(b);
+        return e < 0 ? t : t.slice(0, e);
+      }
+      function splitRotationsFromAdminSection(section) {
+        const parts = section.split(/\n#\d+\s*\n/).slice(1);
+        return parts.map(p => p.trim()).filter(Boolean);
+      }
+      function getField(block, label) {
+        // Escape regex metacharacters in label so labels like "Preceptor Phone (if known)" work
+        const esc = (label || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const rx = new RegExp(`^${esc}\\s*:\\s*(.*)$`, "im");
+        const m = block.match(rx);
+        return m ? (m[1] || "").trim() : "";
+      }
+      function parseAdminBlob(raw) {
+        const text = (raw || "").replace(/\r/g, "");
+        const section = betweenText(text, "Record Summary", "List View") || text;
+
+        let studentFirst = "", studentLast = "", studentEmail = "";
+        const nameLine = section.match(/Student Name:\s*([^\n]+)/i);
+        if (nameLine) {
+          const nm = nameLine[1].trim();
+          // Shared reports typically use "First; Last" while full admin reports often use "First, Last".
+          const parts = nm.split(/[;,]/).map(s => s.trim()).filter(Boolean);
+          if (parts.length >= 2) { studentFirst = parts[0]; studentLast = parts[1]; }
+          else if (parts.length === 1) { studentFirst = parts[0]; }
+        }
+        
+        // Fallback for admin tracker formats that provide separate First/Last fields
+        if (!studentFirst) studentFirst = getField(section, "First Name") || ((section.match(/^\s*First Name:\s*(.+)$/im) || [])[1] || "").trim();
+        if (!studentLast)  studentLast  = getField(section, "Last Name")  || ((section.match(/^\s*Last Name:\s*(.+)$/im)  || [])[1] || "").trim();
+const emailLine = section.match(/Student Email:\s*([^\s\n]+@[^\s\n]+)/i);
+        if (emailLine) studentEmail = emailLine[1].trim();
+
+        const rotSection = betweenText(section, "Rotation Information", "Student ID Number") ||
+                           betweenText(section, "Rotation Information", "Student Email") ||
+                           section;
+        const rotBlocks = splitRotationsFromAdminSection(rotSection);
+
+        const rotations = rotBlocks.map((b) => {
+          const getAny = (labels) => {
+            for (const lab of labels) {
+              const v = getField(b, lab);
+              if ((v || "").trim()) return v.trim();
+            }
+            // If the field exists but is blank, we still want "" (e.g., Preceptor Phone:)
+            for (const lab of labels) {
+              const v = getField(b, lab);
+              if (v !== null && v !== undefined) return (v || "").trim();
+            }
+            return "";
+          };
+
+          const rotation = getAny(["Rotation", "Rotation Name", "Rotation Name/Number", "Course Name/Number", "Course"]);
+          const site = getAny(["Site", "Rotation Site"]);
+          const start = getAny(["Start", "Rotation Start", "Rotation Start Date"]);
+          const end = getAny(["End", "Rotation End", "Rotation End Date"]);
+          const type = getAny(["Type", "Rotation Type"]);
+          const p2raw =
+            getAny([
+              'Select only if this is intended to satisfy a "\\+2 selective" requirement',
+              'Select only if this is intended to satisfy a "+2 selective" requirement',
+              'Select only if this is intended to satisfy a +2 selective requirement'
+            ]) || "";
+
+          const preceptor = getAny(["Preceptor", "Preceptor Name"]);
+          const preEmail = getAny(["Preceptor Email", "Preceptor E-mail", "Preceptor Email Address"]);
+          const prePhoneRaw = getAny(["Preceptor Phone", "Preceptor Phone (if known)"]);
+          // In some Zoho "full admin" report pastes, blank phone rows can end up with the next
+          // field label/value on the same line after the phone label (tabs). Example:
+          //   "Preceptor Phone (if known):\tSubmission Type:\tNew rotation submission"
+          // If that happens, we must treat phone as blank.
+          let prePhoneClean = (prePhoneRaw || "");
+          prePhoneClean = prePhoneClean.split(/\bSubmission Type\b\s*:/i)[0];
+          prePhoneClean = prePhoneClean.split(/\bSubmission Notes\b\s*:/i)[0];
+          prePhoneClean = prePhoneClean.split(/\bCredits(?: Anticipated| Estimate)?\b\s*:/i)[0];
+          if (/^\s*(Submission Type|Submission Notes|Credits)\b/i.test(prePhoneClean)) prePhoneClean = "";
+
+          const prePhone = (typeof normalizePhone === "function") ? normalizePhone(prePhoneClean) : prePhoneClean;
+
+          let pfn = "", pln = "";
+          if (preceptor) {
+            // Supports "First; Last" and "First, Last"
+            const parts = preceptor.split(/[;,]/).map(s => s.trim()).filter(Boolean);
+            if (parts.length >= 2) { pfn = parts[0]; pln = parts[1]; }
+            else if (parts.length === 1) { pfn = parts[0]; }
+          }
+
+          let p2Val = "";
+          if (/Internal Medicine\s*\+2/i.test(p2raw)) p2Val = "Internal Medicine";
+          else if (/Surgery\s*\+2/i.test(p2raw)) p2Val = "Surgery";
+
+          let roVal = "";
+          if (/Sub-?internship/i.test(type)) roVal = "Sub-internship";
+          else if (/Elective/i.test(type)) roVal = "Elective";
+
+          return {
+            sfn: studentFirst, sln: studentLast, se: studentEmail,
+            cn: rotation, site, start, end,
+            ro: roVal, p2: p2Val,
+            pfn, pln, pe: preEmail, cell: prePhone
+          };
+        }).filter(r => r.cn || r.site || r.start || r.end || r.pe);
+
+        return { rotations };
+      }
+
+      function fmtRotationOption(r, idx) {
+        const date = (r.start && r.end) ? `${r.start}–${r.end}` : (r.start || r.end || "");
+        const who = (r.pfn || r.pln) ? `${(r.pfn||"").trim()} ${(r.pln||"").trim()}`.trim() : "";
+        const bits = [r.cn, r.site, date, who].filter(Boolean);
+        return `#${idx+1}: ${bits.join(" | ")}`;
+      }
+
+      function openPasteAdminModal() {
+      const pasteAdminModal = document.getElementById("pasteAdminModal");
+      if (!pasteAdminModal) {
+        showToast("Admin modal not found");
+        return;
+      }
+
+      // Keep previously parsed rotations visible when reopening.
+      // Only clear the list when the text area changes (handled in input listener).
+      if (adminParsed && Array.isArray(adminParsed.rotations) && adminParsed.rotations.length > 0) {
+        const adminPickWrap = document.getElementById("adminPickWrap");
+        if (adminPickWrap) adminPickWrap.style.display = "block";
+      
+        // Remember last successful admin paste
+        lastPasteMode = "admin";
+        const adminTaNow = document.getElementById("pasteAdminText");
+        if (adminTaNow) lastAdminRaw = (adminTaNow.value || "").trim();}
+
+      
+      // Restore previous admin paste text (if any)
+      const ta = document.getElementById("pasteAdminText");
+      if (ta && lastAdminRaw) ta.value = lastAdminRaw;
+
+      
+      // If rotations were previously parsed, re-render the selection list on reopen
+      if (adminParsed && Array.isArray(adminParsed.rotations) && adminParsed.rotations.length > 0) {
+        const adminPickWrap = document.getElementById("adminPickWrap");
+        const adminRotationList = document.getElementById("adminRotationList");
+        if (adminRotationList) adminRotationList.innerHTML = "";
+        adminParsed.rotations.forEach((r, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "secondary";
+          btn.style.textAlign = "left";
+          btn.style.padding = "10px";
+          btn.style.borderRadius = "12px";
+          btn.style.whiteSpace = "normal";
+          if (typeof fmtRotationOption === "function") btn.textContent = fmtRotationOption(r, i);
+          else btn.textContent = `#${i+1}`;
+          btn.addEventListener("click", () => fillRotation(r));
+          adminRotationList?.appendChild(btn);
+        });
+        if (adminPickWrap) adminPickWrap.style.display = "block";
+      }
+pasteAdminModal.style.display = "block";
+      // focus the textarea for quick paste
+      setTimeout(() => document.getElementById("pasteAdminText")?.focus(), 50);
+    }
+
+      function closePasteAdminModal() {
+      // Remember what's currently in the admin paste box
+      const ta = document.getElementById("pasteAdminText");
+      if (ta) lastAdminRaw = (ta.value || "").trim();
+
+      const m = document.getElementById("pasteAdminModal");
+      if (m) m.style.display = "none";
+    }
+
+      function fillRotation(r) {
+        
+        adminImportUsed = true;
+if (typeof fillFromParsed === "function") {
+          fillFromParsed(r);
+        }
+        if (typeof pasteAutofillUsed !== "undefined") pasteAutofillUsed = true;
+
+        
+
+        // Admin paste -> use admin template and copy full email details (To/Cc/Subject/Body) to clipboard
+const w1 = document.getElementById("warnP2");
+        const w2 = document.getElementById("warnRo");
+        if (w1) w1.style.display = "inline";
+        if (w2) w2.style.display = "inline";
+        if (typeof toggleWarnRo === "function") toggleWarnRo();
+        if (typeof toggleWarnP2 === "function") toggleWarnP2();
+
+        if (typeof showToast === "function") showToast("Filled from admin paste");
+        closePasteAdminModal();
+      
+      // Reveal email actions only after a successful admin import
+      const post = document.getElementById("postAdminActions");
+      if (post) post.style.display = "block";
+    
+  refreshFieldErrors();
+}
+
+      // Expose open function for onclick fallback
+      window.openPasteAdminModal = openPasteAdminModal;
+
+      pasteAdminBtn?.addEventListener("click", openPasteAdminModal);
+      pasteAdminCloseBtn?.addEventListener("click", closePasteAdminModal);
+      pasteAdminModal?.addEventListener("click", (e) => { if (e.target === pasteAdminModal) closePasteAdminModal(); });
+
+      pasteAdminClearBtn?.addEventListener("click", () => {
+        if (pasteAdminTextEl) pasteAdminTextEl.value = "";
+        adminParsed = null;
+        if (adminPickWrap) adminPickWrap.style.display = "none";
+        if (adminRotationList) adminRotationList.innerHTML = "";
+        pasteAdminTextEl?.focus();
+        if (adminParseBanner) adminParseBanner.style.display = "none";
+});
+
+      pasteAdminParseBtn?.addEventListener("click", () => {
+        const raw = pasteAdminTextEl?.value || "";
+        if (!raw.trim()) { if (typeof showToast === "function") showToast("Paste some admin text first"); return; }
+
+        const parsed = parseAdminBlob(raw);
+        adminParsed = parsed;
+        const rots = parsed.rotations || [];
+
+        if (adminParseBanner) adminParseBanner.style.display = "none";
+if (rots.length === 0) {
+          if (adminPickWrap) adminPickWrap.style.display = "none";
+          if (adminParseBanner) {
+            adminParseBanner.textContent = "No rotations found.";
+            adminParseBanner.style.display = "block";
+          }
+return;
+        }
+        if (rots.length === 1) {
+          fillRotation(rots[0]);
+          return;
+        }
+
+        if (adminRotationList) adminRotationList.innerHTML = "";
+        rots.forEach((r, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "secondary";
+          btn.style.textAlign = "left";
+          btn.style.padding = "10px";
+          btn.style.borderRadius = "12px";
+          btn.style.whiteSpace = "normal";
+          btn.textContent = fmtRotationOption(r, i);
+          btn.addEventListener("click", () => fillRotation(r));
+          adminRotationList?.appendChild(btn);
+        });
+
+        if (adminPickWrap) adminPickWrap.style.display = "block";
+        if (typeof showToast === "function") showToast(`Found ${rots.length} rotations — click one to import`);
+      });
+    })();
+
+
+function refreshFieldErrors(){document.querySelectorAll(".field-error").forEach(el=>{if((el.value||"").trim()) el.classList.remove("field-error");});}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const pasteCloseBtn = document.getElementById("pasteCloseBtn");
+  if (pasteCloseBtn) pasteCloseBtn.addEventListener("click", closePasteModal);
+
+  const pasteAdminCloseBtn = document.getElementById("pasteAdminCloseBtn");
+  if (pasteAdminCloseBtn) pasteAdminCloseBtn.addEventListener("click", closePasteAdminModal);
+});
+
+function wireRequiredFieldUnhighlight() {
+  const names = ["pfn","pln","pe","sfn","sln","se","cn","site","start","end","ro","type"];
+  names.forEach((nm) => {
+    const el = document.querySelector(`[name="${nm}"]`);
+    if (!el) return;
+    const handler = () => {
+      if ((el.value || "").trim()) el.classList.remove("field-error");
+    };
+    el.addEventListener("input", handler);
+    el.addEventListener("change", handler);
+  });
+}
+document.addEventListener("DOMContentLoaded", () => {
+  wireRequiredFieldUnhighlight();
+});
+
+function isValidMMDDYYYY(val) {
+  if (!val) return false;
+  const m = val.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return false;
+  const mm = parseInt(m[1],10), dd = parseInt(m[2],10), yy = parseInt(m[3],10);
+  if (mm < 1 || mm > 12) return false;
+  if (dd < 1 || dd > 31) return false;
+  return true;
+}
+
+// --- Clear validation highlights/messages on "🧹 Clear Form" ---
+form.addEventListener("reset", () => {
+  setTimeout(() => {
+    try {
+      form.querySelectorAll(".field-error").forEach(el => el.classList.remove("field-error"));
+    } catch {}
+
+    // Hide any validation banner message
+    const banner = document.getElementById("rotTypeBanner");
+    if (banner) {
+      banner.style.display = "none";
+      // restore default text (in case it was changed by validation)
+      banner.textContent = "Select Rotation Type first.";
+    }
+
+    // Hide date-format warning (if it was shown)
+    const dw = document.getElementById("dateWarning");
+    if (dw) dw.style.display = "none";
+
+    // Clear toast text
+    const t = document.getElementById("toast");
+    if (t) t.textContent = "";
+  }, 0);
+});
+
+</script>  </div>
+
+
+<script>
+(function rememberInstructionsState() {
+  const details = document.getElementById('instructionsDetails');
+  if (!details) return;
+  const KEY = 'm4_eval_link_builder_instructions_open';
+  const saved = localStorage.getItem(KEY);
+  if (saved !== null) details.open = (saved === 'true');
+  details.addEventListener('toggle', () => {
+    localStorage.setItem(KEY, String(details.open));
+  });
+})();
 </script>
 </body>
+
 </html>
