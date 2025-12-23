@@ -320,9 +320,7 @@ const toast = document.getElementById("toast");
     function buildEmailParts() {
       const url = buildUrl();
       const studentName = `${(sfnEl.value||"").trim()} ${(slnEl.value||"").trim()}`.trim();
-      const subject = adminImportUsed
-        ? `Evaluation request for ${studentName || "student"}`
-        : `Evaluation request for ${studentName || "your student"}`;
+      const subject = `Evaluation request for ${studentName || "student"} (CNUCOM medical student)`;
 const bodyText = adminImportUsed ?
 `Dear Dr. ${(plnEl.value||"").trim()},
 
