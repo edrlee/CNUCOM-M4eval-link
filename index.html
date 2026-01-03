@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -271,6 +272,20 @@ hr {
     
     let adminImportUsed = false; // becomes true when Admin paste/selection is used
 
+    // When STUDENT data is used (i.e., not Admin import), add the appropriate coordinator/recipient
+    // based on the student's last-name initial (A–E, F–M, N–Z).
+    function getStudentCoordinatorEmail() {
+      if (adminImportUsed) return ""; // do not change Admin behavior
+      const last = (typeof slnEl !== "undefined" && slnEl) ? (slnEl.value || "").trim() : "";
+      if (!last) return "";
+      const ch = (last[0] || "").toUpperCase();
+      if (ch >= "A" && ch <= "E") return "Andrea.Ramirez@cnsu.edu";
+      if (ch >= "F" && ch <= "M") return "Patricia.Gutierrez@cnsu.edu";
+      if (ch >= "N" && ch <= "Z") return "Peter.Cajator@cnsu.edu";
+      return "";
+    }
+
+
     // Remember last successful paste (student vs admin) and the last pasted text
     let lastPasteMode = "student";
     let lastStudentRaw = "";
@@ -501,7 +516,7 @@ async function copyEmailPackageToClipboard() {
       try { await copyFullEmailRich(); } catch {}
       const to = getPreceptorEmailValue();
       if (!to) { showToast("Enter Preceptor Email first."); return; }
-const cc = adminImportUsed ? (seEl.value || "") : "";
+const cc = adminImportUsed ? (seEl.value || "") : (getStudentCoordinatorEmail() || "");
       const q = [];
       if (cc) q.push(`cc=${encodeURIComponent(cc)}`);
       q.push(`subject=${encodeURIComponent(subject)}`);
@@ -518,7 +533,9 @@ const cc = adminImportUsed ? (seEl.value || "") : "";
       if (!preceptor) { showToast("Enter Preceptor Email first."); return; }
 const student = (seEl.value || "").trim();
       // In Student/manual mode, do not include the student email address.
-      const to = adminImportUsed ? (student ? `${preceptor};${student}` : preceptor) : preceptor;
+      const coordinator = (getStudentCoordinatorEmail() || "").trim();
+      // In Student/manual mode, add the coordinator as an additional recipient.
+      const to = adminImportUsed ? (student ? `${preceptor};${student}` : preceptor) : (coordinator ? `${preceptor};${coordinator}` : preceptor);
 
       const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&popoutv2=1`;
 
