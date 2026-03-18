@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -274,8 +273,8 @@ hr {
 // ===== Analytics logging (no student identifiers) =====
 const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbzJ1rdHkUWHTZGdX9mPaMdVGONYdgfZIrgGjcRDEOiY8cD3P5qsiabMEc0ER6hDL1Or6g/exec";
 const LOG_TOKEN = "fdsajk;34qFDAafsmc3iq3u89f!fa";
-const APP_VERSION = "1.1";
-const SCRIPT_VERSION = "as-1.1";
+const APP_VERSION = "1.2";
+const SCRIPT_VERSION = "as-1.2";
 let CURRENT_CLASS_OF = ""; // set after successful paste/extract; used for subsequent main actions
 
 function setCurrentClassOfFromText(text) {
@@ -390,6 +389,27 @@ function getRoleForLog() {
   }
 }
 
+
+function getStudentInitials() {
+  try {
+    const sfn = (document.querySelector('[name="sfn"]')?.value || "").trim();
+    const sln = (document.querySelector('[name="sln"]')?.value || "").trim();
+    const fi = sfn ? sfn[0].toUpperCase() : "";
+    const li = sln ? sln[0].toUpperCase() : "";
+    return fi + li;
+  } catch (_) {
+    return "";
+  }
+}
+
+function getPreceptorEmailForLog() {
+  try {
+    return (document.querySelector('[name="pe"]')?.value || "").trim();
+  } catch (_) {
+    return "";
+  }
+}
+
 function logEvent(eventName, roleOverride, classOfOverride) {
   try {
     const params = new URLSearchParams();
@@ -405,6 +425,8 @@ function logEvent(eventName, roleOverride, classOfOverride) {
     params.append("script_version", SCRIPT_VERSION);
     params.append("class_of", classOfOverride || CURRENT_CLASS_OF || "");
     params.append("manual", getManualFieldsCSV());
+    params.append("student_initials", getStudentInitials());
+    params.append("preceptor_email", getPreceptorEmailForLog());
     params.append("page", location.href);
     params.append("ua", navigator.userAgent);
 
@@ -1668,7 +1690,7 @@ if (modal) modal.style.display = "none";
     opacity: 0.8;
     z-index: 9999;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  ">1.1</div>
+  ">1.2</div>
 
 </body>
 
